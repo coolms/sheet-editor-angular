@@ -1,0 +1,57 @@
+{
+  "name": "@coolms/sheet-editor-angular",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The CoolMS spreadsheet editor for Angular: a grid over an immutable sheet-document model, with cell formats, merges, column and row sizing, and multi-sheet editing.",
+  "license": "MIT",
+  "author": {
+    "name": "Dmitry Popov",
+    "email": "d.popov@coolms.com"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@coolms/core-angular": "^0.2.0",
+    "@coolms/document-engine": "^0.1.0",
+    "@coolms/ui-angular": "^0.1.0",
+    "@ngxs/store": "^22.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "peerDependenciesMeta": {
+    "@coolms/document-engine": { "optional": true }
+  },
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26"
+  },
+  "keywords": [
+    "coolms",
+    "angular",
+    "spreadsheet",
+    "sheet",
+    "xlsx",
+    "editor"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coolms/sheet-editor-angular.git"
+  },
+  "scripts": {
+    "build": "ng-packagr -p ng-package.json -c tsconfig.lib.json",
+    "typecheck": "tsc -p tsconfig.lib.json --noEmit",
+    "lint": "eslint 'src/**/*.ts'",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\""
+  },
+  "devDependencies": {
+    "@angular/cdk": "^22.1.3",
+    "@angular/common": "^22.1.3",
+    "@angular/compiler": "^22.1.3",
+    "@angular/compiler-cli": "^22.1.3",
+    "@angular/core": "^22.1.3",
+    "ng-packagr": "^22.1.1",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0",
+    "typescript": "^6.0.0"
+  }
+}
