@@ -93,7 +93,7 @@ import {
     withoutSheet,
     withRenamedSheet,
 } from './sheet-document.model';
-import { NativeDialogService, ToastService, type VfsNodeDto } from '@coolms/ui-angular';
+import { ConfirmDialogService, NativeDialogService, ToastService, UnsavedChangesService, type VfsNodeDto } from '@coolms/ui-angular';
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { CmsLoaderComponent } from '@coolms/core-angular';
 
@@ -1172,7 +1172,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         }
         .sheet-editor__sheet-pick { width: auto; padding: 2px 6px; font-size: .8125rem; }
         .sheet-editor__actions { display: flex; align-items: center; gap: 8px; }
-        .sheet-editor__dirty { color: var(--cms-warning); font-size: .75rem; }
+        .sheet-editor__dirty { color: var(--cms-warning-text); font-size: .75rem; }
         .sheet-editor__status { color: var(--cms-text-muted); }
         .sheet-editor__foot-left { display: flex; align-items: center; gap: 12px; }
         .sheet-editor__zoom { display: flex; align-items: center; gap: 2px; }
@@ -1252,7 +1252,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         .sheet-editor__grid col { width: 141px; }
         .sheet-editor__grid col.sheet-editor__row-head-col { width: 44px; }
         .sheet-editor__corner, .sheet-editor__col-head, .sheet-editor__row-head {
-            position: sticky; background: var(--cms-surface-2, var(--cms-surface));
+            position: sticky; background: var(--cms-surface-muted, #f3f4f6);
             border: 1px solid var(--cms-border);
             font-weight: 600; color: var(--cms-text-muted);
             text-align: center; padding: 2px 6px;
@@ -1327,7 +1327,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         .sheet-editor__spacer-head {
             position: sticky; top: 0; z-index: 2;
             border: 0; padding: 0;
-            background: var(--cms-surface-2, var(--cms-surface));
+            background: var(--cms-surface-muted, #f3f4f6);
         }
         .sheet-editor__spacer-cell { border: 0; padding: 0; }
         /* Positioned so a wrapped cell's control can fill it exactly — see the
@@ -1335,7 +1335,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         .sheet-editor__cell { border: 1px solid var(--cms-border); padding: 0; position: relative; }
         /* A merged cell reads as one box: the anchor already spans its columns
            and rows via colspan/rowspan, and the covered cells emit no td. */
-        .sheet-editor__cell--merged { background: var(--cms-surface-2, transparent); }
+        .sheet-editor__cell--merged { background: var(--cms-surface-muted, #f3f4f6); }
         .sheet-editor__cell--in-range { box-shadow: inset 0 0 0 1px var(--cms-primary); }
         /* The selected cell keeps a mark of its own once focus goes to a
            TOOLBAR control. Until this existed the only mark was the input's
@@ -1380,7 +1380,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            would end it -- the failure reads as a syntax error further down.) */
         .sheet-editor__cell--formula .sheet-editor__input { color: var(--cms-primary); }
         /* An error is not a value: it reads as a fault, not as content. */
-        .sheet-editor__cell--error .sheet-editor__input { color: var(--cms-danger); }
+        .sheet-editor__cell--error .sheet-editor__input { color: var(--cms-danger-text); }
         /* Waiting on template data. Dimmed rather than coloured, because there
            is nothing wrong with it — the answer simply is not knowable yet. */
         .sheet-editor__cell--unresolved .sheet-editor__input {
@@ -1402,7 +1402,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             padding: 4px 8px; text-align: left; font: inherit; color: inherit;
             cursor: pointer;
         }
-        .sheet-editor__helper-item--on { background: var(--cms-primary); color: #fff; }
+        .sheet-editor__helper-item--on { background: var(--cms-primary); color: var(--cms-on-chrome); }
         .sheet-editor__helper-sig { padding: 4px 8px; }
         .sheet-editor__helper-name { font-weight: 600; }
         .sheet-editor__helper-hint { display: block; font-size: .85em; opacity: .75; }
@@ -1426,7 +1426,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            merely DECLARED must look different from one that is doing something,
            or an author cannot tell why rows are missing. */
         .sheet-editor__filter-btn--on {
-            background: var(--cms-primary); border-color: var(--cms-primary); color: #fff;
+            background: var(--cms-primary); border-color: var(--cms-primary); color: var(--cms-on-chrome);
         }
         /* Opens RIGHTWARD from the cell's left edge, not leftward from its
            right one. Anchored to the right, a filter on column A -- which is
@@ -1538,13 +1538,13 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
             padding: 6px 12px;
             border-bottom: 1px solid var(--cms-border);
-            background: var(--cms-surface-2, var(--cms-surface));
+            background: var(--cms-surface-muted, #f3f4f6);
         }
         .sheet-editor__find-input { width: 180px; }
         .sheet-editor__rules {
             padding: 6px 12px;
             border-bottom: 1px solid var(--cms-border);
-            background: var(--cms-surface-2, var(--cms-surface));
+            background: var(--cms-surface-muted, #f3f4f6);
         }
         .sheet-editor__rules-head { font-size: .8125rem; color: var(--cms-text-muted); margin-bottom: 4px; }
         .sheet-editor__rules-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -1569,12 +1569,12 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         .sheet-editor__names {
             padding: 6px 12px;
             border-bottom: 1px solid var(--cms-border);
-            background: var(--cms-surface-2, var(--cms-surface));
+            background: var(--cms-surface-muted, #f3f4f6);
         }
         .sheet-editor__names-add { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .sheet-editor__names-input { width: 200px; }
         .sheet-editor__names-error {
-            margin: 4px 0 0; font-size: .8125rem; color: var(--cms-danger, #b42318);
+            margin: 4px 0 0; font-size: .8125rem; color: var(--cms-danger, #dc2626);
         }
         .sheet-editor__names-empty {
             margin: 6px 0 0; font-size: .8125rem; color: var(--cms-text-muted); max-width: 60ch;
@@ -1591,7 +1591,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            be able to SEE which cells that means. Two classes, so it beats the
            plain cell rule declared later -- the lesson the frozen panes left. */
         .sheet-editor__cell.sheet-editor__cell--match {
-            background: var(--cms-warning-bg, rgb(255 214 0 / 22%));
+            background: var(--cms-warning-light, #fffbeb);
         }
         .sheet-editor__border-row { display: flex; gap: 4px; }
         /* Square, because here the GLYPH is the label -- buttons sized to their
@@ -1638,6 +1638,8 @@ export class SheetEditorDialogComponent {
     private readonly store      = inject(Store);
     private readonly toast      = inject(ToastService);
     private readonly dialogs    = inject(NativeDialogService);
+    private readonly confirm    = inject(ConfirmDialogService);
+    private readonly unsaved    = inject(UnsavedChangesService);
     private readonly destroyRef = inject(DestroyRef);
     private readonly host       = inject(ElementRef<HTMLElement>);
 
@@ -2350,6 +2352,10 @@ export class SheetEditorDialogComponent {
     });
 
     constructor() {
+        // beforeunload half of the guard (#2484): the per-dialog confirm
+        // cannot see a tab close or a reload. Disposed with the component, so
+        // a closed editor stops voting.
+        this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.dirty()));
         this.load();
         // Names for the font select. Memoised across dialog opens, so this is
         // one fetch per tab and usually none at all.
@@ -5053,8 +5059,24 @@ export class SheetEditorDialogComponent {
         this.commit({ ...doc });
     }
 
+    /**
+     * ⚠️ Was an unconditional close. The footer rendered "unsaved changes"
+     * and Cancel threw them away without asking -- the flag was shown to the
+     * user and ignored by the code that discarded the work.
+     *
+     * `confirmDiscard` completes after one value, so a plain subscribe is
+     * enough; there is nothing to unsubscribe from.
+     */
     protected close(): void {
-        this.dialogRef.close();
+        if (!this.dirty()) {
+            this.dialogRef.close();
+
+            return;
+        }
+
+        this.confirm.confirmDiscard(this.node.name).subscribe((discard) => {
+            if (discard) this.dialogRef.close();
+        });
     }
 
     protected save(): void {
