@@ -1,6 +1,6 @@
 {
   "name": "@coolms/sheet-editor-angular",
-  "version": "2.0.0-alpha.1",
+  "version": "2.0.0-alpha.2",
   "description": "The CoolMS spreadsheet editor for Angular: a grid over an immutable sheet-document model, with cell formats, merges, column and row sizing, and multi-sheet editing.",
   "license": "MIT",
   "author": {
