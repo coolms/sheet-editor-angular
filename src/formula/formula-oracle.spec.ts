@@ -6,7 +6,7 @@ import type { SheetCellDto, SheetDocumentDto } from '../sheet-document.model';
 /**
  * This engine against an INDEPENDENT one, on the same formulas.
  *
- * ## ⚠️ Why an oracle and not more hand-written expectations
+ * ##  Why an oracle and not more hand-written expectations
  *
  * `formula.spec.ts` says what this engine should do, and it was written by the
  * same hand that wrote the engine — so the two share their assumptions, and a
@@ -26,7 +26,7 @@ describe('the formula engine against LibreOffice', () => {
     /**
      * The literal cells, taken from the fixture rather than restated here.
      *
-     * ⚠️ They used to be written out in this file as well, which is one
+     *  They used to be written out in this file as well, which is one
      * definition too many: a cell changed in the workbook and not here would
      * silently change what every formula was compared against, and the suite
      * would go red somewhere unrelated. The generator now emits both from the
@@ -55,7 +55,7 @@ describe('the formula engine against LibreOffice', () => {
     };
 
     /**
-     * ⚠️ Compared numerically when both sides are numbers. LibreOffice writes
+     *  Compared numerically when both sides are numbers. LibreOffice writes
      * `4.33333333333333` for a third; asserting string equality would fail on
      * the fifteenth digit and say nothing about the arithmetic.
      */
@@ -90,7 +90,7 @@ describe('the formula engine against LibreOffice', () => {
     });
 
     /**
-     * ⚠️ The prefix that started this. Excel STORES `CONCAT` as `_xlfn.CONCAT`,
+     *  The prefix that started this. Excel STORES `CONCAT` as `_xlfn.CONCAT`,
      * so an uploaded workbook carries it and every reader is expected to strip
      * it.
      */
@@ -104,7 +104,7 @@ describe('the formula engine against LibreOffice', () => {
     });
 
     /**
-     * ⚠️ Where the oracle is the one that is wrong.
+     *  Where the oracle is the one that is wrong.
      *
      * The oracle is a second opinion, not an authority. Where LibreOffice and
      * Excel disagree, this engine follows EXCEL on purpose: the formula is
@@ -139,14 +139,14 @@ describe('the formula engine against LibreOffice', () => {
             cells['H1'] = { formula: 'VLOOKUP(1,A2:D5,5,FALSE())' };
             const doc: SheetDocumentDto = { version: 1, sheets: { Sheet1: { cells } } };
 
-            // ⚠️ #REF!, not #VALUE!: there is no fifth column, which is a
+            //  #REF!, not #VALUE!: there is no fifth column, which is a
             // reference problem. LibreOffice calls it a value problem.
             expect(render(evaluateSheet(doc, 'Sheet1').get('H1'))).toBe('#REF!');
         });
     });
 
     /**
-     * ⚠️ And the other direction: `_xludf.` marks a USER-DEFINED function,
+     *  And the other direction: `_xludf.` marks a USER-DEFINED function,
      * which this engine genuinely cannot run. Stripping every prefix alike
      * would turn "I cannot do this" into a wrong answer.
      */

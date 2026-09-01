@@ -40,7 +40,7 @@ one thing worse than no check.
 
 ## What does cover this package
 
-All 12 of this package's specs run in the admin SPA suite, which imports each one by path from `packages/theme-admin/angular/src/sheet-editor-angular-specs.spec.ts`. That suite last ran 1215 of 1215 green. The tests are real and they do execute -- just not here, and not as a gate on a pull request opened against this repository.
+All 12 of this package's specs run in the admin SPA suite, which imports each one by path from the application's own spec bridge. That suite last ran 1215 of 1215 green. The tests are real and they do execute -- just not here, and not as a gate on a pull request opened against this repository.
 
 ## What would unblock it
 

@@ -30,7 +30,7 @@ const OPERATORS = ['<>', '<=', '>=', '+', '-', '*', '/', '^', '&', '=', '<', '>'
  * `A1`, `$A$1`, `AA100` — the `$` is accepted and dropped, since this engine
  * does not move formulas, so absolute and relative mean the same thing here.
  *
- * ⚠️ The lookahead excludes `(` as well as word characters, so a NAME that
+ *  The lookahead excludes `(` as well as word characters, so a NAME that
  * happens to look like a reference — `LOG10(` is the standing example — is a
  * call and not column LOG row 10. The backend's `RowExpansionMap::REFERENCE`
  * has carried that guard from the start and this had not; no function with

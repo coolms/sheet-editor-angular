@@ -1,5 +1,5 @@
 /**
- * Defined names in the grid's preview (#2384).
+ * Defined names in the grid's preview.
  *
  * ## Why the editor has to understand these
  *
@@ -39,7 +39,7 @@ describe('defined names', () => {
     });
 
     /**
-     * ⚠️ A name resolved everywhere EXCEPT inside a function call, which is the
+     *  A name resolved everywhere EXCEPT inside a function call, which is the
      * only place `SUM(items_amount)` ever appears. The call path built its own
      * copy of `spread` instead of delegating, and the copy never dereferenced --
      * so this summed the range's FIRST CELL and looked like a working feature.
@@ -68,7 +68,7 @@ describe('defined names', () => {
     });
 
     /**
-     * ⚠️ `$` means "do not move when COPIED", which no evaluation here performs
+     *  `$` means "do not move when COPIED", which no evaluation here performs
      * -- and every editor writes a name's range with them, so treating `$B$2`
      * as different from `B2` would make every imported name unresolvable.
      */

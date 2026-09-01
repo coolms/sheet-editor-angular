@@ -8,7 +8,7 @@ import { columnWidthFromPx, columnWidthToPx, gridExtent, indexToColumn } from '.
 import { dateToSerial } from './number-format';
 
 /**
- * The grid surface for a native `.dsheet` (ADR-155).
+ * The grid surface for a native `.dsheet`.
  *
  * Rendered through TestBed rather than asserted on the model alone: the model
  * has its own spec, and what can go wrong HERE is the wiring — a grid that does
@@ -331,7 +331,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * The #1977 rule, at the surface an operator touches. `@` declares the cell
+ * The rule, at the surface an operator touches. `@` declares the cell
      * text rather than arithmetic — editing the TEXT must not discard it, or
      * the next generation promotes `00412` to 412.
      */
@@ -356,7 +356,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * The format is the one property that changes MEANING rather than
-     * appearance (#1977). Until now it could only be set by hand-editing JSON,
+     * appearance. Until now it could only be set by hand-editing JSON,
      * which is the operator this format exists for being sent to a text editor.
      */
     it('marks the focused cell as Text and saves that', () => {
@@ -424,7 +424,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * The renderer has handled merges correctly since [#1998]; until now an
+ * The renderer has handled merges correctly for some time; until now an
      * author could only create one by hand-editing JSON.
      *
      * Asserted on the RENDERED grid as well as the saved document, because the
@@ -628,7 +628,7 @@ describe('SheetEditorDialogComponent', () => {
         httpMock.expectNone(CONTENT_URL);
     });
 
-    // ── header selection and resize ──────────────────────────────────────────
+    // -- header selection and resize ------------------------------------------
 
     function header(fixture: ReturnType<typeof makeFixture>, label: string): HTMLElement {
         const th: HTMLElement | null = fixture.nativeElement.querySelector(`th[aria-label="${label}"]`);
@@ -639,7 +639,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * How many rows are in the DOM right now — the viewport window, not the
-     * grid's height. Since #2067 those are different numbers, and conflating
+ * grid's height. Those are different numbers now, and conflating
      * them is how these specs started asserting the virtualiser instead of the
      * selection.
      */
@@ -647,7 +647,7 @@ describe('SheetEditorDialogComponent', () => {
         return fixture.nativeElement.querySelectorAll('.sheet-editor__row-head').length;
     }
 
-    /** As {@link renderedRows}, for the column axis virtualised in #2068. */
+ /** As {@link renderedRows}, for the column axis virtualised. */
     function renderedCols(fixture: ReturnType<typeof makeFixture>): number {
         return fixture.nativeElement.querySelectorAll('.sheet-editor__col-head').length;
     }
@@ -680,7 +680,7 @@ describe('SheetEditorDialogComponent', () => {
      *
      * DERIVED rather than hard-coded. These specs are about the selection rule;
      * the floor is incidental to them, and writing it out meant three of them
-     * failed the day it changed (#2066) while testing nothing that had broken.
+     * failed the day it changed while testing nothing that had broken.
      */
     const { rows: GRID_ROWS, cols: GRID_COLS } = gridExtent({ cells: {} });
 
@@ -699,7 +699,7 @@ describe('SheetEditorDialogComponent', () => {
             .toBeTrue();
 
         // Counted against the RENDERED rows, not the grid's full height. Since
-        // #2067 only the visible window exists in the DOM, so a count against
+ // Only the visible window exists in the DOM, so a count against
         // GRID_ROWS would be asserting how much got virtualised rather than
         // what got selected.
         const refs = highlighted(fixture);
@@ -2079,7 +2079,7 @@ describe('SheetEditorDialogComponent', () => {
     }
 
     /**
-     * ⚠️ The defect this was written for. A formula built ENTIRELY by clicking
+     *  The defect this was written for. A formula built ENTIRELY by clicking
      * cells is a value the browser does not consider the user to have edited,
      * so no `change` event ever fires for it — not on Enter, not on clicking
      * away. Measured in a real browser: `input`, then `blur`, and no `change`
@@ -2231,7 +2231,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ Dragging mid-formula grows the REFERENCE. Found only by dragging in a
+     *  Dragging mid-formula grows the REFERENCE. Found only by dragging in a
      * real browser: clearing the document's text selection to stop the drag
      * painting across cells also wiped the CARET of the focused formula input,
      * so the span was read as zero and the range landed in front of the
@@ -2337,7 +2337,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ A plain arrow COLLAPSES a selection. The extend flag survives a
+     *  A plain arrow COLLAPSES a selection. The extend flag survives a
      * shift-click -- the prevented mousedown fires no focus to consume it -- so
      * the arrow inherited it, left the anchor behind, and went on extending a
      * range the author had just walked away from.
@@ -2540,7 +2540,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ A frozen row has to be RENDERED to be sticky, and virtualisation would
+     *  A frozen row has to be RENDERED to be sticky, and virtualisation would
      * otherwise drop it into the top spacer the moment the window moved past
      * it. That is the whole interaction between these two features.
      */
@@ -2570,7 +2570,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ A merge reaches LEFTWARD when the window is widened to include its
+     *  A merge reaches LEFTWARD when the window is widened to include its
      * anchor, and that widening would otherwise pull the window back over the
      * frozen block. A title merged across A1:D1 -- the commonest thing at the
      * top of a sheet -- rendered column A twice, two inputs claiming one cell.
@@ -2820,7 +2820,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ The browser's own find bar would open over a grid it cannot search:
+     *  The browser's own find bar would open over a grid it cannot search:
      * the cells are inputs, and their text is not in the page.
      */
     it('takes Ctrl+F from the browser', () => {
@@ -3040,7 +3040,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ A rule is judged on what the cell SHOWS -- a formula by its result.
+     *  A rule is judged on what the cell SHOWS -- a formula by its result.
      * Reading the formula's text would never match a number at all.
      */
     it('judges a formula by what it computes', () => {
@@ -3061,7 +3061,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * ⚠️ The RULE wins over the cell's own fill. A conditional colour that lost
+     *  The RULE wins over the cell's own fill. A conditional colour that lost
      * would show only on cells the author had left plain -- so a shaded table,
      * exactly where an overdue line needs highlighting, would show nothing.
      */
@@ -3113,7 +3113,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * Naming a range, which is what lets a total follow rows that do not exist
-     * when the template is written (#2385).
+     * when the template is written.
      *
      * The helpers have their own spec; what can go wrong HERE is the wiring --
      * a name that never reaches the document, or reaches it describing the
@@ -3205,7 +3205,7 @@ describe('SheetEditorDialogComponent', () => {
         remove.click();
         fixture.detectChanges();
 
-        // ⚠️ Absent, not empty: the backend omits the key too, so a template
+        //  Absent, not empty: the backend omits the key too, so a template
         // that lost its last name is byte-identical to one that never had one.
         expect(savedNames(fixture)).toBeUndefined();
     });
@@ -3296,7 +3296,7 @@ describe('SheetEditorDialogComponent', () => {
 
         const event = ctrlWheel(fixture, -100);
 
-        // ⚠️ THE bug. An uncancelled wheel stays the browser's, and the browser
+        //  THE bug. An uncancelled wheel stays the browser's, and the browser
         // zooms the whole admin -- shell, toolbar, dialog frame -- around a grid
         // that is still exactly the size it was.
         expect(event.defaultPrevented)
@@ -3355,7 +3355,7 @@ describe('SheetEditorDialogComponent', () => {
         zoomTo(fixture, 200);
         scrollGrid(fixture, 2600);
 
-        // ⚠️ The same scrollbar travel covers HALF the sheet at 200%. Reading
+        //  The same scrollbar travel covers HALF the sheet at 200%. Reading
         // the raw pixels instead would build the window for row 101 while row 51
         // is what the grid is showing -- blanks above, missing cells below.
         expect(cellInput(fixture, 'A51'))
@@ -3426,7 +3426,7 @@ describe('SheetEditorDialogComponent', () => {
             JSON.parse(save.request.body.content);
         save.flush({ contentHash: 'x' });
 
-        // ⚠️ The column starts at the default 141px and the pointer crossed 100
+        //  The column starts at the default 141px and the pointer crossed 100
         // SCREEN pixels at 200%, which is 50 grid pixels. 191, not 241 -- and
         // certainly not the 382 that measuring a zoomed header and adding raw
         // pointer travel would store.

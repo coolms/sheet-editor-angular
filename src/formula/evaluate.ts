@@ -117,7 +117,7 @@ class Evaluator implements FunctionContext {
      * of names at all, and a name can never behave differently from the range
      * it denotes.
      *
-     * ⚠️ Case-INSENSITIVE, because a spreadsheet's names are: an author who
+     *  Case-INSENSITIVE, because a spreadsheet's names are: an author who
      * declares `items_amount` and types `Items_Amount` gets the range, not an
      * error. An unknown name is `#NAME?`, which is what Excel answers and what
      * the parser used to refuse to produce at all.
@@ -235,12 +235,12 @@ class Evaluator implements FunctionContext {
                 }
                 // The context evaluates in the sheet the CALL sits in, which is
                 // not always the evaluator's own when a formula crosses sheets.
-                // ⚠️ Every one of these DELEGATES. This object used to carry its
+                //  Every one of these DELEGATES. This object used to carry its
                 // own copy of `spread`, and the copy is what functions actually
                 // receive -- so a defined name resolved everywhere except inside
                 // a function call, which is the only place `SUM(items_amount)`
                 // ever appears. `grid` delegated and worked; `spread` did not
-                // and silently summed the range's first cell (#2384).
+                // and silently summed the range's first cell.
                 const scoped: FunctionContext = {
                     evaluate: (n2) => this.node(n2, sheetName),
                     spread: (n2) => this.spreadIn(n2, sheetName),
@@ -295,13 +295,13 @@ class Evaluator implements FunctionContext {
 /**
  * What a literal cell holds, once template tokens are accounted for.
  *
- * ## ⚠️ The DOCUMENT decides the type, not the spelling
+ * ##  The DOCUMENT decides the type, not the spelling
  *
  * A cell whose text happens to parse as a number is not necessarily a number:
  * `42` stored as text is `t="s"` in the file, and the model says the same thing
- * with `numberFormat: '@'` (#1977). Inferring the type from the string made
+ * with `numberFormat: '@'`. Inferring the type from the string made
  * `ISNUMBER(G1)` answer TRUE and `G1 = 42` answer TRUE for a cell holding TEXT
- * -- both of which LibreOffice and Excel answer FALSE (#2349).
+ * -- both of which LibreOffice and Excel answer FALSE.
  *
  * Arithmetic still coerces: `G1 + 1` is 43 and `G1 & "!"` is `42!`, because
  * that is what a spreadsheet does with text that looks like a number. What
@@ -345,9 +345,9 @@ function rangeBox(
 
 /** Every reference in a range, in reading order. */
 /**
- * `Sheet1!$B$2:$B$3` → the node it denotes. Null when it is not a range at all.
+ * `Sheet1!$B$2:$B$3` -> the node it denotes. Null when it is not a range at all.
  *
- * ⚠️ The `$` signs are stripped rather than honoured. They mean "do not move me
+ *  The `$` signs are stripped rather than honoured. They mean "do not move me
  * when this formula is COPIED", which no evaluation here performs — and a
  * defined name is written with them by every editor, so treating `$B$2` as a
  * different reference from `B2` would make every imported name unresolvable.

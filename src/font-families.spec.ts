@@ -59,7 +59,7 @@ describe('the sheet editor font families', () => {
     });
 
     it('tries again on the next open after a failure', async () => {
-        // ⚠️ The memo is CLEARED on failure. Caching the empty list would cost
+        //  The memo is CLEARED on failure. Caching the empty list would cost
         // the tab its font select for the rest of the session over one 503.
         spyOn(console, 'error');
         fetchSpy.and.returnValue(Promise.resolve({ ok: false, status: 503 } as Response));

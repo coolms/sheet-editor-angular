@@ -67,7 +67,7 @@ describe('formula parser', () => {
     });
 
     /**
-     * ⚠️ This asserted a REFUSAL until #2384. A bare name is a DEFINED NAME, and
+ *  This asserted a REFUSAL until a later fix. A bare name is a DEFINED NAME, and
      * whether the workbook declares it is the evaluator's question -- answered
      * with `#NAME?`, exactly as a spreadsheet does. Refusing to parse made the
      * editor reject `SUM(items_amount)`, a formula the rendered document
@@ -93,10 +93,10 @@ describe('operator precedence, where a spreadsheet and TypeScript disagree', () 
     });
 
     it('makes ^ LEFT-associative: 2^3^2 is 64, not 512', () => {
-        // ⚠️ This test used to assert 512, which is what TypeScript's `**`
+        //  This test used to assert 512, which is what TypeScript's `**`
         // does — the very thing this file's header says it exists not to
         // follow. A spreadsheet reads `2^3^2` as `(2^3)^2`. Excel and
-        // LibreOffice both answer 64 (#2348).
+        // LibreOffice both answer 64.
         expect(shown('2^3^2')).toBe('64');
     });
 
@@ -358,7 +358,7 @@ describe('lookup', () => {
     });
 
     /**
-     * ⚠️ Absent, the fourth argument is TRUE -- an APPROXIMATE match over data
+     *  Absent, the fourth argument is TRUE -- an APPROXIMATE match over data
      * assumed sorted. That is a footgun, and it is Excel's: the formula is
      * written into the workbook verbatim, so an editor defaulting to an exact
      * match would preview a different answer than the document gives.

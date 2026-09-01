@@ -1,5 +1,5 @@
 /**
- * Declaring a name for a range, and the rules a name has to obey (#2385).
+ * Declaring a name for a range, and the rules a name has to obey.
  *
  * ## Why an author wants one
  *
@@ -36,7 +36,7 @@ const MAX_LENGTH = 255;
 const SHAPE = /^[A-Za-z_][A-Za-z0-9_.]*$/;
 
 /**
- * ⚠️ `R` and `C` alone are reserved: Excel reads them as whole-row and
+ *  `R` and `C` alone are reserved: Excel reads them as whole-row and
  * whole-column shorthand in R1C1 notation.
  */
 const RESERVED = new Set(['R', 'C']);
@@ -60,7 +60,7 @@ export function nameProblem(name: string, taken: readonly string[] = []): string
         return `“${trimmed}” is reserved by the spreadsheet.`;
     }
 
-    // ⚠️ The rule that actually bites: `Q4` is a perfectly natural name for a
+    //  The rule that actually bites: `Q4` is a perfectly natural name for a
     // quarter's figures, and it is also a cell.
     if (parseRef(trimmed.toUpperCase())) {
         return `“${trimmed}” is a cell reference, so a formula could not tell them apart.`;
@@ -75,7 +75,7 @@ export function nameProblem(name: string, taken: readonly string[] = []): string
 }
 
 /**
- * `Sheet1` + `B2:B4` → `Sheet1!$B$2:$B$4`.
+ * `Sheet1` + `B2:B4` -> `Sheet1!$B$2:$B$4`.
  *
  * Absolute on purpose: a name denotes a fixed block, and every editor writes one
  * this way. A sheet whose name needs quoting gets them, with an embedded quote
@@ -116,7 +116,7 @@ export function withDefinedName(doc: SheetDocumentDto, name: string, range: stri
 /**
  * The document without it.
  *
- * ⚠️ Drops the key entirely rather than leaving it empty, and drops the whole
+ *  Drops the key entirely rather than leaving it empty, and drops the whole
  * map when it was the last one -- a `.dsheet` is a source file an operator reads
  * in a diff, and `"definedNames": {}` on every template is noise. The backend
  * omits it on the same rule.
@@ -125,7 +125,7 @@ export function withoutDefinedName(doc: SheetDocumentDto, name: string): SheetDo
     const rest: Record<string, string> = { ...doc.definedNames };
     delete rest[name];
 
-    // ⚠️ Annotated, not inferred: the spread gives the literal a DEFINITE
+    //  Annotated, not inferred: the spread gives the literal a DEFINITE
     // `definedNames`, and `delete` is refused on a property that is not optional.
     // Spreading `doc` also carries every other field, so a document does not
     // quietly lose one here the way a rebuilt literal would.

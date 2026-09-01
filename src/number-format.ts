@@ -11,7 +11,7 @@
  * 2. **`TEXT(value, format)`**, which is this function with the format written
  *    out by the author instead of stored on the cell.
  *
- * ⚠️ **An unrecognised format returns the RAW value.** OOXML's format grammar
+ *  **An unrecognised format returns the RAW value.** OOXML's format grammar
  * is far larger than this, and a `.dsheet` may carry any code an author
  * hand-wrote. Rendering a code we half-understand would put a number on screen
  * that the document does not agree with — silently, and in the one place an
@@ -161,7 +161,7 @@ function pieces(section: string): Piece[] | null {
             }
             if (COLOUR.test(inside)) continue;
 
-            // ⚠️ NOT "any word is a colour". `[h]` is elapsed time — a clock
+            //  NOT "any word is a colour". `[h]` is elapsed time — a clock
             // that counts past 24 hours — and treating it as an unknown colour
             // dropped the bracket and rendered `[h]:mm` as minutes alone, which
             // is a plausible wrong time. An unrecognised bracket is

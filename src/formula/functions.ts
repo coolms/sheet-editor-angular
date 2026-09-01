@@ -207,7 +207,7 @@ function predicate(
 
 const round = (n: number, digits: number, mode: 'half' | 'up' | 'down'): number => {
     const factor = 10 ** digits;
-    // ⚠️ `1.005 * 100` lands at 100.49999999999999, so rounding the scaled
+    //  `1.005 * 100` lands at 100.49999999999999, so rounding the scaled
     // double gives 1 where every spreadsheet gives 1.01. Excel rounds the
     // DECIMAL the author sees, so normalise to the 15 significant digits a
     // double actually carries before deciding. The same artefact bites
@@ -254,7 +254,7 @@ function rounder(name: string, summary: string, mode: 'half' | 'up' | 'down'): F
     };
 }
 
-// ── Criteria, wildcards and lookup ──────────────────────────────────────────
+// -- Criteria, wildcards and lookup ------------------------------------------
 
 /** `">10"` splits into an operator and an operand; a bare value is equality. */
 const CRITERION = /^(<=|>=|<>|<|>|=)?([\s\S]*)$/u;
@@ -364,7 +364,7 @@ function matchIndex(key: CellValue, values: readonly CellValue[], type: number):
 /**
  * The values a criterion picks out of a range, paired with a second range.
  *
- * ⚠️ The two ranges must hold the same NUMBER of cells. Excel resizes a short
+ *  The two ranges must hold the same NUMBER of cells. Excel resizes a short
  * `sum_range` from its top-left corner to match; this engine cannot see past
  * the range it was handed, so it says `#VALUE!` rather than quietly summing a
  * column that stops early. The mismatch is a mistake far more often than an
@@ -558,17 +558,17 @@ const FUNCTIONS: readonly FormulaFunction[] = [
             maxArgs: Number.POSITIVE_INFINITY,
             signature: 'COUNT(value1, [value2, …])',
             summary: 'How many arguments are numbers.',
-            // ⚠️ COUNT IGNORES errors rather than propagating them -- it is
+            //  COUNT IGNORES errors rather than propagating them -- it is
             // asking "how many of these are numbers?", and an error is simply
             // not one. Built on `numeric()` it answered `#DIV/0!` where a
-            // spreadsheet answers 0 (#2349).
+            // spreadsheet answers 0.
             call(args, ctx) {
-                // ⚠️ Not `collect()`, which propagates the first error it
+                //  Not `collect()`, which propagates the first error it
                 // meets. COUNT has to walk past one.
                 let count = 0;
                 for (const arg of args) {
                     for (const value of ctx.spread(arg)) {
-                        // ⚠️ UNRESOLVED still stops it: a template token means
+                        //  UNRESOLVED still stops it: a template token means
                         // the answer is not known until the document is
                         // generated, which is not the same as "not a number".
                         if (value.kind === 'unresolved') return value;
@@ -757,7 +757,7 @@ const FUNCTIONS: readonly FormulaFunction[] = [
             (s) => num([...s].length)),
         textual('UPPER', 'UPPER(text)', 'The text in capitals.', (s) => text(s.toUpperCase())),
         textual('LOWER', 'LOWER(text)', 'The text in lower case.', (s) => text(s.toLowerCase())),
-        // ⚠️ Excel's TRIM also collapses INTERNAL runs of spaces to one --
+        //  Excel's TRIM also collapses INTERNAL runs of spaces to one --
         // `TRIM("a  b")` is `"a b"`. Trimming only the ends is what
         // `String.trim()` does, and it is not what the function means.
         textual('TRIM', 'TRIM(text)', 'The text without leading, trailing or repeated spaces.',
@@ -967,7 +967,7 @@ const FUNCTIONS: readonly FormulaFunction[] = [
                 const index = toNumber(ctx.evaluate(args[2]));
                 if (!index.ok) return index.value;
 
-                // ⚠️ Absent, `sorted` is TRUE -- an approximate match. That is a
+                //  Absent, `sorted` is TRUE -- an approximate match. That is a
                 // footgun, and it is Excel's, and this formula is written into an
                 // Excel file verbatim: an editor that defaulted to an exact match
                 // would preview a different answer than the document gives.
@@ -1128,13 +1128,13 @@ const BY_NAME = new Map(FUNCTIONS.map((f) => [f.name, f]));
  * bare name. It is a storage artefact of the format, not part of the
  * function's identity.
  *
- * ⚠️ Found by comparing this engine against LibreOffice on the same workbook
- * (#2347): `_xlfn.CONCAT` and `_xlfn.DAYS` came back `#NAME?` here and computed
+ *  Found by comparing this engine against LibreOffice on the same workbook
+ *: `_xlfn.CONCAT` and `_xlfn.DAYS` came back `#NAME?` here and computed
  * there. Since a formula is written through to the `.xlsx` VERBATIM, an author
  * uploading a real Excel file saw the grid disagree with the document it was
  * previewing -- the exact failure this file's own header warns about.
  *
- * ⚠️ `_xludf.` is deliberately NOT stripped. That prefix marks a USER-DEFINED
+ *  `_xludf.` is deliberately NOT stripped. That prefix marks a USER-DEFINED
  * function, which this engine genuinely cannot run, and `#NAME?` is the honest
  * answer for it.
  */

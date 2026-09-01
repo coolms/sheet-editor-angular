@@ -1,5 +1,5 @@
 /**
- * The `.dsheet` document (ADR-155), and the A1 arithmetic a grid needs.
+ * The `.dsheet` document, and the A1 arithmetic a grid needs.
  *
  * Mirrors the backend's `SheetDocument` / `SheetCell` exactly — same key names,
  * same sparseness, same "value XOR formula" rule — because the file this reads
@@ -18,7 +18,7 @@ export interface SheetCellDto {
     value?: string;
     /** An A1 formula WITHOUT its leading `=`. */
     formula?: string;
-    /** An OOXML number-format code — `@` declares text (#1977). */
+    /** An OOXML number-format code — `@` declares text. */
     numberFormat?: string;
     bold?: boolean;
     italic?: boolean;
@@ -35,7 +35,7 @@ export interface SheetCellDto {
      * Hyperlink target. May carry DTMPL tokens — `{var:order.trackingUrl}` is
      * the point of putting one in a template — so it is NOT validated here.
      * The backend's writer is the gate, at the last moment before the URL
-     * enters a workbook someone will click (#2102).
+     * enters a workbook someone will click.
      */
     link?: string;
     /**
@@ -114,7 +114,7 @@ export interface SheetDto {
     columnWidths?: Record<string, number>;
     /**
      * Row number => height in POINTS. Keyed by number, so it must survive as a
-     * JSON object — the backend casts it for exactly that reason (ADR-157).
+     * JSON object — the backend casts it for exactly that reason.
      */
     rowHeights?: Record<string, number>;
     merges?: string[];
@@ -174,12 +174,12 @@ export interface SheetDocumentDto {
     version: number;
     sheets: Record<string, SheetDto>;
     /**
-     * Name → the range it stands for: `items_amount` → `Sheet1!$B$2:$B$3`.
+     * Name -> the range it stands for: `items_amount` -> `Sheet1!$B$2:$B$3`.
      *
      * Document-level, because a defined name is: the backend keeps it on the
      * workbook and the range names its own sheet.
      *
-     * ⚠️ The grid needs these to PREVIEW honestly. A formula is written through
+     *  The grid needs these to PREVIEW honestly. A formula is written through
      * to the `.xlsx` verbatim, so `SUM(items_amount)` renders correctly whether
      * or not this editor understands it — and an editor that showed `#NAME?`
      * for a formula the document computes would be lying about the document.
@@ -194,7 +194,7 @@ export const EMPTY_SHEET_DOCUMENT: SheetDocumentDto = {
     sheets: { Sheet1: { cells: {} } },
 };
 
-/** `A` → 1, `Z` → 26, `AA` → 27. */
+/** `A` -> 1, `Z` -> 26, `AA` -> 27. */
 export function columnToIndex(letters: string): number {
     let index = 0;
     for (const char of letters) {
@@ -204,7 +204,7 @@ export function columnToIndex(letters: string): number {
     return index;
 }
 
-/** 1 → `A`, 26 → `Z`, 27 → `AA`. */
+/** 1 -> `A`, 26 -> `Z`, 27 -> `AA`. */
 export function indexToColumn(index: number): string {
     let out = '';
     let n = index;
@@ -217,7 +217,7 @@ export function indexToColumn(index: number): string {
     return out;
 }
 
-/** `B4` → `{ column: 'B', row: 4 }`; null when it is not an A1 reference. */
+/** `B4` -> `{ column: 'B', row: 4 }`; null when it is not an A1 reference. */
 export function parseRef(ref: string): { column: string; row: number } | null {
     const match = /^([A-Z]+)([1-9]\d*)$/.exec(ref.toUpperCase());
 
@@ -234,14 +234,14 @@ export function parseRef(ref: string): { column: string; row: number } | null {
  * is.
  */
 /**
- * How much grid EXISTS. Since #2067 that is no longer how much is rendered.
+ * How much grid EXISTS. Since that is no longer how much is rendered.
  *
  * 1,000 rows x 26 columns is what Google Sheets opens on, and the row count is
  * now free: {@link SheetEditorDialogComponent} renders only the rows in the
  * viewport and stands spacer boxes in for the rest, so a thousand rows costs
  * the same DOM as thirty.
  *
- * ⚠️ COLUMNS are still all rendered, so their floor is a real cost and they
+ *  COLUMNS are still all rendered, so their floor is a real cost and they
  * grow on demand instead. Column virtualisation is harder than row
  * virtualisation here — a `<colgroup>` sizes the table and every row would have
  * to agree on which columns it skips — and 26 columns is what an author expects
@@ -281,14 +281,14 @@ export function cellToInput(cell: SheetCellDto | undefined): string {
  * The reverse, preserving everything the grid does not edit.
  *
  * `numberFormat` and `bold` are carried through untouched — the number format
- * is the author's TYPE DECLARATION (#1977) and losing it on an unrelated edit
+ * is the author's TYPE DECLARATION and losing it on an unrelated edit
  * would turn an order number back into arithmetic. Returning `null` for an
  * emptied cell keeps the document sparse, which is how the backend writes it.
  */
 export function inputToCell(raw: string, previous: SheetCellDto | undefined): SheetCellDto | null {
     const text = raw;
 
-    // ⚠️ Everything the cell had EXCEPT what this edit replaces. Naming the
+    //  Everything the cell had EXCEPT what this edit replaces. Naming the
     // fields to KEEP is what let ten of them go missing: the list held
     // `numberFormat` and `bold`, so retyping the words in a cell silently threw
     // away its colour, its fill, its alignment, its link and its borders. Every
@@ -328,7 +328,7 @@ export interface NumberFormatOption {
  * `Text` is first among the non-default ones because it is the one that
  * CHANGES MEANING rather than appearance: `@` is the author's declaration that
  * a value is not arithmetic, and it is what keeps `00412` an order number
- * rather than the integer 412 (#1977). The rest are presentation.
+ * rather than the integer 412. The rest are presentation.
  *
  * Deliberately short. A curated list an operator can read beats a complete one
  * they cannot, and a code outside it is still preserved — see
@@ -358,7 +358,7 @@ export function isKnownFormat(code: string | undefined): boolean {
 /**
  * True when nothing is left worth storing — mirrors the backend's isEmpty().
  *
- * ⚠️ EVERY styling field counts. A cell holding only a background colour has no
+ *  EVERY styling field counts. A cell holding only a background colour has no
  * text and is still something the author made on purpose; treating it as blank
  * would delete a shaded row the moment anything else on it changed. The two
  * sides of this rule have to agree, or the editor and the file disagree about
@@ -435,7 +435,7 @@ export function withWrap(cell: SheetCellDto | undefined, wrap: boolean): SheetCe
 }
 
 /**
- * Set or clear one of the optional style fields (#2060).
+ * Set or clear one of the optional style fields.
  *
  * `undefined` CLEARS rather than storing an empty value, which is the same rule
  * every other `with*` here follows: absent means "inherit the workbook
@@ -462,7 +462,7 @@ export function withStyle<K extends 'fontFamily' | 'fontSize' | 'color' | 'backg
 
 /**
  * `#RRGGBB` upper-case — the same canonical form the backend's `SheetCell`
- * produces when it parses a `.dsheet` (#2076).
+ * produces when it parses a `.dsheet`.
  *
  * A browser colour input emits LOWER case, so without this the editor wrote
  * `#ffee00` into a file the backend would rewrite as `#FFEE00`. Both work —
@@ -614,7 +614,7 @@ export interface MergeBox {
     right: number;
 }
 
-/** `A1:D2` → its box; null when it is not a range. */
+/** `A1:D2` -> its box; null when it is not a range. */
 export function parseRange(range: string): MergeBox | null {
     const [from, to] = range.toUpperCase().split(':');
     const a = from ? parseRef(from) : null;
@@ -821,7 +821,7 @@ function overlaps(a: MergeBox, b: MergeBox): boolean {
  * only its top-left value — that is what `SheetDocumentWriter` does when it
  * renders, because PhpSpreadsheet's `mergeCells()` empties the rest — so a
  * document that quietly held values under a merge would render differently from
- * what the grid shows, which is the exact divergence [#1998] existed to close.
+ * what the grid shows, which is the exact divergence this closed.
  * Excel behaves the same way and warns before it does.
  *
  * Any merge OVERLAPPING the new one is dropped: two merges sharing a cell is
@@ -1726,7 +1726,7 @@ export function parseSheetDocument(content: string): { doc: SheetDocumentDto; ok
         // sheets were named "0" and "1" encoded as `"sheets": [ … ]`. `Object.keys`
         // still yields "0"/"1" so the tabs LOOK right, but adding a sheet then sets
         // a string key on an array and `JSON.stringify` drops it on save — the
-        // #2002 loss again, one level up. Rebuild it as a plain object, which keeps
+ // The same loss again, one level up. Rebuild it as a plain object, which keeps
         // the positional names rather than discarding them.
         if (Array.isArray(doc.sheets)) {
             doc.sheets = { ...(doc.sheets as unknown as Record<string, SheetDto>) };

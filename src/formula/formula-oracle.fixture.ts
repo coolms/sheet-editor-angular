@@ -10,7 +10,7 @@
  * already carried values would have been our own arithmetic wearing someone
  * else's name.
  *
- * ⚠️ Regenerating: `tools/formula-oracle.sh`. Do not hand-edit an expectation
+ *  Regenerating: `tools/formula-oracle.sh`. Do not hand-edit an expectation
  * to make a test pass -- the point of the file is that nobody here chose these
  * numbers.
  */

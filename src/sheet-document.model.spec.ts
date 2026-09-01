@@ -60,7 +60,7 @@ import {
 } from './sheet-document.model';
 
 /**
- * The `.dsheet` model the grid editor reads and writes (ADR-155).
+ * The `.dsheet` model the grid editor reads and writes.
  *
  * These are the parts that can be wrong without anything crashing: a lost
  * number format, a grid too small to type into, a garbage file silently
@@ -130,7 +130,7 @@ describe('sheet document model', () => {
 
         /**
          * THE one that matters. The number format is the author's TYPE
-         * DECLARATION (#1977) — `@` is what keeps an order number like `00412`
+         * DECLARATION — `@` is what keeps an order number like `00412`
          * text instead of arithmetic. Editing the cell's TEXT must not discard
          * it, or the next generation silently promotes the value.
          */
@@ -239,7 +239,7 @@ describe('sheet document model', () => {
         });
 
         /**
-         * Wrap and vertical alignment (#2084) — the pair that makes a tall row
+         * Wrap and vertical alignment — the pair that makes a tall row
          * usable. Wrap is a boolean like bold, so it CLEARS to absent rather
          * than storing false: `wrapText` has a real default in OOXML and a
          * stored `false` would be a third state meaning the same as absent.
@@ -501,7 +501,7 @@ describe('sheet document model', () => {
          * its top-left value — that is what the renderer does, because
          * PhpSpreadsheet's `mergeCells()` empties the rest — so a document
          * holding values under a merge would render differently from what the
-         * grid shows. That divergence is what [#1998] existed to close.
+ * grid shows. That divergence is what existed to close.
          */
         it('clears the cells a merge swallows, keeping the anchor', () => {
             const sheet: SheetDto = {
@@ -648,7 +648,7 @@ describe('sheet document model', () => {
          * colour input emits lower case; `SheetCell::colour()` produces upper.
          * Without this the editor writes `#ffee00` into a file the backend
          * would rewrite as `#FFEE00` — a case-only diff on a line nobody
-         * touched (#2076).
+         * touched.
          */
         it('stores a colour in the same canonical form the backend parses to', () => {
             for (const spelling of ['#ffee00', 'ffee00', '#FFEE00', '#FfEe00']) {
@@ -1243,7 +1243,7 @@ describe('sheet document model', () => {
         });
 
         /**
-         * ⚠️ The staleness guard. A lookup is a snapshot, and the dialog holds
+         *  The staleness guard. A lookup is a snapshot, and the dialog holds
          * it in a computed over the document so an edit throws it away. Were it
          * kept, the grid would go on drawing a merge the author had just undone.
          */

@@ -87,11 +87,11 @@ class Parser {
 
             // `^` is right-associative, so it recurses at its OWN precedence;
             // everything else recurses one higher to stay left-associative.
-            // ⚠️ `^` is LEFT-associative here, as in every spreadsheet:
+            //  `^` is LEFT-associative here, as in every spreadsheet:
             // `2^3^2` is `(2^3)^2` = 64, not 512. TypeScript's `**` is
             // right-associative and this used to follow it -- which is exactly
             // what this file exists NOT to do. Measured against LibreOffice
-            // (#2348), which agrees with Excel at 64.
+            //, which agrees with Excel at 64.
             const right = this.expression(precedence + 1);
             if (!right.ok) return right;
             left = {

@@ -98,7 +98,7 @@ import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import { CmsLoaderComponent } from '@coolms/core-angular';
 
 /**
- * A grid surface for a native `.dsheet` template (ADR-155).
+ * A grid surface for a native `.dsheet` template.
  *
  * ## Why a grid at all
  *
@@ -113,12 +113,12 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
  * Not a spreadsheet ENGINE. Nothing here evaluates a formula — `=B4*C4` is
  * stored, not computed, exactly as the model stores it and the renderer emits
  * it. Excel and LibreOffice compute it when the generated workbook opens.
- * Growing this into a calculator is the temptation ADR-155 names in its
+ * Growing this into a calculator is the temptation names in its
  * consequences.
  *
  * ## What it must not lose
  *
- * A cell's `numberFormat` is the author's TYPE DECLARATION (#1977): `@` is what
+ * A cell's `numberFormat` is the author's TYPE DECLARATION: `@` is what
  * keeps `00412` an order number rather than the integer 412. This edits a
  * cell's TEXT only and carries formatting through untouched — see
  * {@link inputToCell}. The format is not editable here yet; losing it silently
@@ -319,7 +319,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
                         (click)="toggleWrap()">
                     <i class="bi bi-text-wrap"></i>
                 </button>
-                <!-- A LINK is a text field, not a toggle (#2102): it carries a
+                <!-- A LINK is a text field, not a toggle: it carries a
                      URL, and often a DTMPL token instead of one, so there is
                      nothing to toggle and nothing to validate here — the
                      backend's writer is the gate before it enters a workbook.
@@ -1194,7 +1194,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             font-size: .8125rem;
         }
         /* Controls keep their size and wrap whole rather than being squashed
-           one at a time — the same rule the editor toolbar follows (#2061). */
+ one at a time — the same rule the editor toolbar follows. */
         .sheet-editor__toolbar > *:not(.sheet-editor__hint) { flex-shrink: 0; }
         .sheet-editor__active {
             font-weight: 700; min-width: 3.5em;
@@ -1265,7 +1265,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            both. */
         .sheet-editor__col-head--frozen { z-index: 4; }
         .sheet-editor__row-head--frozen { z-index: 4; }
-        /* ⚠️ TWO classes, not one, and that is the fix rather than the style:
+        /*  TWO classes, not one, and that is the fix rather than the style:
            the plain .sheet-editor__cell rule sets position relative and is
            declared LATER in this sheet, so a single-class rule here lost the
            cascade and the cell stayed relative -- pinned by nothing, with a
@@ -1357,7 +1357,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            height the file stores. Full height so the control fills the row the
            auto-fit measured for it, rather than showing its own scrollbar
            inside a row that is already tall enough. */
-        /* ⚠️ Absolutely positioned rather than height:100%, and that is a fix
+        /*  Absolutely positioned rather than height:100%, and that is a fix
            not a flourish. A percentage height needs a definite base and a table
            cell does not give one — measured, the control resolved to 45px
            inside a 111px row and silently clipped two of its own wrapped lines.
@@ -1662,20 +1662,20 @@ export class SheetEditorDialogComponent {
     protected readonly sheetNames = computed(() => Object.keys(this.doc()?.sheets ?? {}));
 
     /**
-     * Rendered height of a row with no stated height, in CSS pixels (#2067).
+     * Rendered height of a row with no stated height, in CSS pixels.
      *
      * PINNED as a constant and applied to every row, because virtualisation
      * needs to know where row N is WITHOUT measuring it — a content-driven
      * height cannot be predicted, and a scroll position computed from a guess
      * puts the wrong rows under the pointer.
      *
-     * ⚠️ This is 26px ≈ 19.5pt, and `SheetDocumentWriter::DEFAULT_ROW_HEIGHT`
+     *  This is 26px ≈ 19.5pt, and `SheetDocumentWriter::DEFAULT_ROW_HEIGHT`
      * is 12.8pt — so an untouched row is TALLER on the canvas than in the
      * generated workbook. That divergence predates this change and is left
      * alone deliberately: matching the workbook would cramp a row that has to
      * hold a text input, and matching the canvas would restyle every sheet
      * already generated. It is a decision, not an oversight, and it is the row
-     * equivalent of the font mismatch #2052 fixed.
+ * equivalent of the font mismatch that was fixed.
      */
     private static readonly DEFAULT_ROW_PX = 26;
 
@@ -1714,7 +1714,7 @@ export class SheetEditorDialogComponent {
     /**
      * Viewport geometry as MEASURED, in the scroll container's own pixels.
      *
-     * ⚠️ Raw on purpose, and the distinction is the whole reason zoom works
+     *  Raw on purpose, and the distinction is the whole reason zoom works
      * here. The grid carries a `zoom`, so one pixel of the scroll container is
      * `zoom` pixels of grid -- while every width and height in the document,
      * and therefore every window and spacer computed from one, is written in
@@ -1766,7 +1766,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * Every row whose height is not the default: auto-fitted wrapped rows and
-     * rows an author sized by hand, in ONE map (#2085).
+     * rows an author sized by hand, in ONE map.
      *
      * ## Why they merge here rather than at each use
      *
@@ -1859,7 +1859,7 @@ export class SheetEditorDialogComponent {
             probe = document.createElement('div');
             probe.setAttribute('aria-hidden', 'true');
             // Off-screen rather than `display: none`, which measures as zero.
-            // ⚠️ `box-sizing: border-box` matches .sheet-editor__input, and it
+            //  `box-sizing: border-box` matches .sheet-editor__input, and it
             // is load-bearing: content-box would wrap the probe at the full
             // column width while the real control wraps at the width MINUS its
             // 12px of padding, so the two would break at different words and
@@ -1928,7 +1928,7 @@ export class SheetEditorDialogComponent {
     /**
      * The rows held in place at the top: always 1..N, whatever is scrolled to.
      *
-     * ⚠️ They have to be RENDERED to be sticky, and virtualisation would
+     *  They have to be RENDERED to be sticky, and virtualisation would
      * otherwise leave them inside the top spacer the moment the window moved
      * past them. That is the whole interaction between these two features: a
      * frozen row is a row the window may not drop.
@@ -2062,7 +2062,7 @@ export class SheetEditorDialogComponent {
             last = Math.max(last, box.right);
         }
 
-        // ⚠️ AFTER the merge widening, which reaches leftward and would
+        //  AFTER the merge widening, which reaches leftward and would
         // otherwise pull the window back over the frozen block: this sheet's
         // title is merged across A1:D1, so widening set `first` to 1 again and
         // column A was rendered twice -- once frozen, once in the window, two
@@ -2242,7 +2242,7 @@ export class SheetEditorDialogComponent {
     /**
      * Ctrl + wheel over the grid zooms the GRID.
      *
-     * ⚠️ `{ passive: false }` at the registration is the whole fix. Without a
+     *  `{ passive: false }` at the registration is the whole fix. Without a
      * cancellable listener the browser keeps the gesture and zooms the entire
      * admin -- shell, toolbar, dialog frame and all -- around a grid that is
      * still exactly the size it was. That is what an author reports as "zoom
@@ -2294,7 +2294,7 @@ export class SheetEditorDialogComponent {
     /**
      * Set the zoom, keeping the grid point under the anchor where it is.
      *
-     * ⚠️ Written onto the DOM here rather than bound in the template, and the
+     *  Written onto the DOM here rather than bound in the template, and the
      * ORDER is load-bearing. The new scroll position can only be set once the
      * grid has been laid out at the new scale: while zooming in, the scroll
      * extent grows, and a browser asked for a position past the old, smaller
@@ -2352,7 +2352,7 @@ export class SheetEditorDialogComponent {
     });
 
     constructor() {
-        // beforeunload half of the guard (#2484): the per-dialog confirm
+        // beforeunload half of the guard: the per-dialog confirm
         // cannot see a tab close or a reload. Disposed with the component, so
         // a closed editor stops voting.
         this.destroyRef.onDestroy(this.unsaved.watch(this, () => this.dirty()));
@@ -2417,7 +2417,7 @@ export class SheetEditorDialogComponent {
     /**
      * A cell that is not showing a computed value: what it holds, as it looks.
      *
-     * ⚠️ The cell being EDITED shows what it stores; every other cell shows
+     *  The cell being EDITED shows what it stores; every other cell shows
      * what the document will show. The two differ for a date, and only for a
      * date: a `.xlsx` keeps one as the SERIAL its format describes, so an
      * imported invoice read `46255` in this grid while the generated document
@@ -2511,7 +2511,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * Families offered by name, not measured from the system, and READ FROM THE
-     * PLATFORM MANIFEST rather than typed out (#2312).
+     * PLATFORM MANIFEST rather than typed out.
      *
      * The name is what lands in the workbook, and the workbook is opened
      * somewhere else — so the useful list is the one Excel and LibreOffice both
@@ -2519,7 +2519,7 @@ export class SheetEditorDialogComponent {
      * An empty choice means "inherit", which is not the same as naming the
      * default: see the model's note on why the default is never stored.
      *
-     * ⚠️ The literal this replaced offered Georgia, Verdana and Tahoma, which
+     *  The literal this replaced offered Georgia, Verdana and Tahoma, which
      * the platform vendors nothing for. Installing a family is now a manifest
      * entry and four files; this list follows on its own.
      */
@@ -2600,7 +2600,7 @@ export class SheetEditorDialogComponent {
     protected rowPx(row: number): number {
         // The SAME map the offsets and the total height are built from — see
         // effectiveRowPx. Reading `rowHeights` directly here (as this did until
-        // #2085) would paint an auto-fitted row at its wrapped height while the
+ // Doing so would paint an auto-fitted row at its wrapped height while the
         // arithmetic still believed it was 26px.
         return this.effectiveRowPx().get(row) ?? SheetEditorDialogComponent.DEFAULT_ROW_PX;
     }
@@ -2611,7 +2611,7 @@ export class SheetEditorDialogComponent {
         event.preventDefault();
 
         const header = (event.target as HTMLElement | null)?.parentElement;
-        // ⚠️ Both numbers are SCREEN pixels: a bounding rect reports the zoomed
+        //  Both numbers are SCREEN pixels: a bounding rect reports the zoomed
         // size, and the pointer travels across the screen rather than across the
         // grid. The stored height is in the grid's own scale, so both are
         // brought back to it -- without this a drag at 200% resizes the row
@@ -2671,7 +2671,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * The cell's vertical alignment, which belongs on the TD rather than the
-     * input (#2084).
+     * input.
      *
      * `vertical-align` on a table cell distributes whatever height the row has
      * spare — so it does nothing until a row is taller than its content, which
@@ -2692,7 +2692,7 @@ export class SheetEditorDialogComponent {
     /**
      * A cell's background: its rule's, if one claims it, else its own.
      *
-     * ⚠️ The RULE WINS, which is what Excel does and what makes the feature
+     *  The RULE WINS, which is what Excel does and what makes the feature
      * mean anything: a conditional fill that lost to the cell's own would show
      * only on cells the author had left plain, so a shaded table -- the kind
      * anybody would want an overdue line highlighted in -- would show nothing
@@ -2723,7 +2723,7 @@ export class SheetEditorDialogComponent {
     /**
      * Commit the cell being left, and put the helper away.
      *
-     * ⚠️ On BLUR and not on `change`, and that is the whole of the fix. The
+     *  On BLUR and not on `change`, and that is the whole of the fix. The
      * browser fires `change` only for a value it considers the USER to have
      * edited -- and a value written by POINT MODE is not one. A formula built
      * entirely by clicking cells (`=SUM(` then click, then shift-click) fired
@@ -2882,7 +2882,7 @@ export class SheetEditorDialogComponent {
         if (input) this.trackCaret(input);
     }
 
-    // ── Formula helper ──────────────────────────────────────────────────────
+    // -- Formula helper ------------------------------------------------------
     //
     // All the thinking is in `formula/helper.ts`, which is a pure function of
     // (text, caret). What is left here is plumbing: where the caret is, which
@@ -2925,7 +2925,7 @@ export class SheetEditorDialogComponent {
     }
 
     protected trackCaret(input: HTMLInputElement | HTMLTextAreaElement): void {
-        // ⚠️ Only the FOCUSED input may claim the editing state.
+        //  Only the FOCUSED input may claim the editing state.
         //
         // Point mode cancels its mousedown so focus never leaves the formula --
         // but the browser still delivers `click` to the cell that was pointed
@@ -2985,7 +2985,7 @@ export class SheetEditorDialogComponent {
 
         if (this.onFormulaKey(event)) return;
 
-        // ⚠️ Escape reaches the CDK dialog otherwise, and the whole editor
+        //  Escape reaches the CDK dialog otherwise, and the whole editor
         // closes -- taking every unsaved cell with it. Mid-edit it belongs to
         // the CELL, and it does what a spreadsheet does: puts back what was
         // there. With nothing to revert it still closes the editor.
@@ -3272,7 +3272,7 @@ export class SheetEditorDialogComponent {
     /**
      * The cell a gesture just extended TO, or null.
      *
-     * ⚠️ A ref and not a boolean, and that is the whole point. As a flag it was
+     *  A ref and not a boolean, and that is the whole point. As a flag it was
      * set by shift-click and waited for a `focus` that a prevented mousedown
      * never fires -- so it sat there until the NEXT focus of any kind and ate
      * that one instead. A plain arrow after a shift-click inherited it, left
@@ -3293,7 +3293,7 @@ export class SheetEditorDialogComponent {
         // the selection or growing a formula's reference.
         if (0 === event.button) this.startDrag(ref);
 
-        // ⚠️ POINT MODE FIRST, and only where a reference could legally go.
+        //  POINT MODE FIRST, and only where a reference could legally go.
         // While a formula is being typed, clicking a cell writes its reference
         // instead of moving the cursor -- what every spreadsheet does. The
         // condition is what keeps it safe: `pointInsertAt` answers null after a
@@ -3318,7 +3318,7 @@ export class SheetEditorDialogComponent {
         }
 
         if (!event.shiftKey) {
-            // ⚠️ A plain click ENDS any extension, and clearing the flag HERE
+            //  A plain click ENDS any extension, and clearing the flag HERE
             // is what makes that true. The flag guards against a stray focus
             // arriving after a prevented shift-click; because that prevention
             // means no focus fires at all, the flag otherwise survived until
@@ -3369,7 +3369,7 @@ export class SheetEditorDialogComponent {
     /**
      * Watch the pointer, until the button comes up.
      *
-     * ⚠️ The listener is registered OUTSIDE Angular and re-enters only when the
+     *  The listener is registered OUTSIDE Angular and re-enters only when the
      * cell under the pointer CHANGES. A drag across one cell is hundreds of
      * mousemove events and at most one state change; running change detection
      * over a grid of inputs for each of them would make the grid stutter under
@@ -3431,7 +3431,7 @@ export class SheetEditorDialogComponent {
     private dragTo(ref: string): void {
         if (null === this.dragFrom) return;
 
-        // ⚠️ POINT MODE FIRST, and before anything touches the document's
+        //  POINT MODE FIRST, and before anything touches the document's
         // selection. `removeAllRanges()` wipes the caret of the focused formula
         // input, and the span below is read FROM that caret -- so clearing it
         // first made every dragged reference land at offset zero: `=SUM(`
@@ -3533,7 +3533,7 @@ export class SheetEditorDialogComponent {
     /**
      * The colour outlining this cell as a formula reference, if any.
      *
-     * ⚠️ Tests BOXES rather than looking a cell up in a set of them. Building
+     *  Tests BOXES rather than looking a cell up in a set of them. Building
      * that set meant walking every cell of every referenced range on every
      * keystroke -- `SUM(A1:A10000)` is ten thousand map entries per character
      * typed, and a mistyped `BD93:B5` made five thousand of them for a range
@@ -3733,7 +3733,7 @@ export class SheetEditorDialogComponent {
     /**
      * EVERYTHING the cell's own `<td>` wears, as one object.
      *
-     * ⚠️ One call and not seven, and this is the same lesson `styleAt` records
+     *  One call and not seven, and this is the same lesson `styleAt` records
      * one screen up -- broken and re-learnt by measurement. The conditional
      * colour, weight, style and fill were four separate bindings, and each of
      * them called `lookAt`, which walks every conditional range on the sheet
@@ -4283,7 +4283,7 @@ export class SheetEditorDialogComponent {
     /**
      * The document as it stood after the LAST commit, cloned.
      *
-     * ⚠️ Kept continuously rather than taken at the start of each edit, and
+     *  Kept continuously rather than taken at the start of each edit, and
      * that is what makes one funnel possible. Several write paths mutate
      * `doc.sheets[...]` or `sheet.cells[...]` IN PLACE and only then publish a
      * shallow copy -- so by the time a commit runs, the "current" document has
@@ -4324,7 +4324,7 @@ export class SheetEditorDialogComponent {
     /**
      * Step back one change.
      *
-     * ⚠️ `dirty` is NOT cleared by undoing back to the loaded document. It
+     *  `dirty` is NOT cleared by undoing back to the loaded document. It
      * could be -- count the steps -- but a flag that says "saved" while the
      * file on disk might differ is the one failure worth avoiding, and undoing
      * to the start then saving costs nothing.
@@ -4374,7 +4374,7 @@ export class SheetEditorDialogComponent {
     /**
      * Why the typed name cannot be used, or null.
      *
-     * ⚠️ Recomputed against the names ALREADY declared, so "already used" is
+     *  Recomputed against the names ALREADY declared, so "already used" is
      * answered before the button is pressed rather than after -- and the button
      * is disabled on the same signal, so the two cannot disagree.
      */
@@ -4553,7 +4553,7 @@ export class SheetEditorDialogComponent {
                 placeholder: 'New\nOpen\nClosed',
                 initialValue: (this.validationAtActive()?.rule.values ?? []).join('\n'),
                 required: true,
-                // ⚠️ A comma cannot be escaped in an OOXML inline list, so an
+                //  A comma cannot be escaped in an OOXML inline list, so an
                 // option containing one would silently become TWO options in
                 // the generated workbook. Refused here, where the author can
                 // still fix it, rather than dropped silently by the backend.
@@ -4604,7 +4604,7 @@ export class SheetEditorDialogComponent {
     protected toggleFullScreen(): void {
         this.fullScreen.update(on => !on);
 
-        // ⚠️ Load-bearing. Both virtualisation windows are computed from a
+        //  Load-bearing. Both virtualisation windows are computed from a
         // MEASURED viewport that is otherwise only taken on load and on
         // scroll. Resizing without re-measuring leaves the grid rendering the
         // old, smaller window -- blank rows below and missing columns to the
@@ -4825,7 +4825,7 @@ export class SheetEditorDialogComponent {
     /**
      * The merges and rules of the sheet on screen, indexed.
      *
-     * ⚠️ Held in a `computed` so its LIFETIME is the document's: every write
+     *  Held in a `computed` so its LIFETIME is the document's: every write
      * commits a new document object, which drops this and builds a fresh one.
      * A lookup kept across an edit would draw merges the sheet no longer has.
      * {@link SheetLookup} has the measurements that made it necessary.
@@ -5023,7 +5023,7 @@ export class SheetEditorDialogComponent {
         const sheet = this.doc()?.sheets[this.activeSheet()];
         const width = sheet ? columnWidthOf(sheet, column) : undefined;
 
-        // Never null since #2068: the window is computed from these widths, so
+        // Never null now: the window is computed from these widths, so
         // an implicit CSS default would make the arithmetic and the paint two
         // different numbers.
         return width === undefined
@@ -5060,7 +5060,7 @@ export class SheetEditorDialogComponent {
     }
 
     /**
-     * ⚠️ Was an unconditional close. The footer rendered "unsaved changes"
+     *  Was an unconditional close. The footer rendered "unsaved changes"
      * and Cancel threw them away without asking -- the flag was shown to the
      * user and ignored by the code that discarded the work.
      *

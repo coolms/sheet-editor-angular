@@ -125,7 +125,7 @@ function covers(range: string, ref: string): boolean {
 /**
  * The look a cell takes on, or null when no rule claims it.
  *
- * ⚠️ FIRST match wins, and the rules are in the author's order. Excel applies
+ *  FIRST match wins, and the rules are in the author's order. Excel applies
  * the first `<cfRule>` that matches and stops, so "red over 90" written before
  * "amber over 60" is red at 95 -- and written the other way round, everything
  * above 60 is amber and nothing is ever red. The editor keeps the order the

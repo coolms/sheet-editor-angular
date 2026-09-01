@@ -62,9 +62,8 @@ copy of that peer to anyone installing both.
 
 ## Status
 
-Not published, and no repository yet — `tools/publish-guard.sh` reports "no
-tracked files" for it, which is the guard declining to certify what it cannot
-read rather than a clean result.
+A pre-release: the shape is still moving and it carries no
+compatibility promise.
 
 ## Licence
 

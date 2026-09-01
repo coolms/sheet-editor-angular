@@ -160,9 +160,9 @@ export function toBoolean(v: CellValue): { ok: true; value: boolean } | { ok: fa
  * nobody reads.
  */
 export function compareValues(op: string, left: CellValue, right: CellValue): CellValue {
-    // ⚠️ A BLANK takes the type of whatever it is compared WITH. An empty cell
+    //  A BLANK takes the type of whatever it is compared WITH. An empty cell
     // equals 0 and it also equals "" -- both are true in a spreadsheet, and
-    // ranking blank as a number made the second one false (#2349).
+    // ranking blank as a number made the second one false.
     if (left.kind === 'blank' && right.kind === 'text') left = text('');
     if (right.kind === 'blank' && left.kind === 'text') right = text('');
 

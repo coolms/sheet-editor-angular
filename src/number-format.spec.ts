@@ -56,7 +56,7 @@ describe('formatting a value', () => {
 
     /**
      * `@` is the author's declaration that the content is not arithmetic
-     * (#1977). Formatting it as a number would undo exactly that.
+     *. Formatting it as a number would undo exactly that.
      */
     it('leaves a text-declared cell alone', () => {
         expect(formatCellValue('00412', '@')).toBe('00412');
@@ -138,7 +138,7 @@ describe('formatting a value', () => {
     });
 
     /**
-     * ⚠️ The safety property of the whole file. OOXML's grammar is far larger
+     *  The safety property of the whole file. OOXML's grammar is far larger
      * than this subset, and a rendered guess is a number the document does not
      * agree with — shown in the one place an author cannot check it.
      */

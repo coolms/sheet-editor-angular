@@ -222,7 +222,7 @@ describe('point mode: where a clicked cell would land', () => {
     });
 
     /**
-     * ⚠️ The caret INSIDE a token, which is not the same as the token before
+     *  The caret INSIDE a token, which is not the same as the token before
      * it. Reported from the editor twice in one sitting: the reference landed
      * in the middle of what was already written, and the result was a formula
      * nobody could read back to what they had done.

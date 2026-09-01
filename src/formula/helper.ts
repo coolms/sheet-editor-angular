@@ -177,7 +177,7 @@ export function referencesIn(text: string): FormulaReference[] {
  * `A1B2`, which is not a formula anybody meant, and the author has to reach
  * for backspace between every two clicks.
  *
- * ## ⚠️ The token the caret is INSIDE is not the token before it
+ * ##  The token the caret is INSIDE is not the token before it
  *
  * This read only the last token that ENDED before the caret, so a caret parked
  * in the middle of something was treated as though it sat just after whatever
@@ -206,7 +206,7 @@ export function pointInsertAt(text: string, caret: number): { from: number; to: 
         (t) => t.kind !== 'whitespace' && at >= t.start && at <= t.start + t.text.length,
     );
 
-    // ⚠️ A reference is replaced WHOLE, and a RANGE is one reference. Read
+    //  A reference is replaced WHOLE, and a RANGE is one reference. Read
     // from the tokens, `B3:B5` is three of them, so a caret at its end replaced
     // only the `B5`: dragging the end of a range wrote the new range INSIDE the
     // old one, `=SUM(B3:B3:B5`. `referencesIn` already knows a `ref colon ref`

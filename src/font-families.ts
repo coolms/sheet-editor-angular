@@ -12,7 +12,7 @@ import { FONT_MANIFEST_ASSET, offeredFontFamilies, type FontManifest } from '@co
  * third thing. Offering only what we vendor means the cell an author sees is
  * the cell the workbook describes.
  *
- * ⚠️ NAMES only. None of the 7.2MB of faces is fetched: a grid draws with the
+ *  NAMES only. None of the 7.2MB of faces is fetched: a grid draws with the
  * browser's own copy of a family the platform also vendors, and the manifest is
  * consulted for what to put in the select, nothing more.
  */

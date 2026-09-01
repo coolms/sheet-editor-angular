@@ -1,5 +1,5 @@
 /**
- * Declaring a name, and the rules that stop one shadowing a cell (#2385).
+ * Declaring a name, and the rules that stop one shadowing a cell.
  */
 import {
     definedNamesOf, nameProblem, scopedRange, withDefinedName, withoutDefinedName,
@@ -17,7 +17,7 @@ describe('declaring a name', () => {
     });
 
     /**
-     * ⚠️ The rule that actually bites. `Q4` is a natural name for a quarter's
+     *  The rule that actually bites. `Q4` is a natural name for a quarter's
      * figures and it is also a cell, so a formula could not tell them apart.
      */
     it('refuses a name that is a cell reference', () => {
@@ -89,7 +89,7 @@ describe('the document', () => {
     });
 
     /**
-     * ⚠️ The last one takes the whole map with it. A `.dsheet` is a source file
+     *  The last one takes the whole map with it. A `.dsheet` is a source file
      * an operator reads in a diff, and `"definedNames": {}` on every template is
      * noise -- the backend omits it on the same rule, so a document that has
      * never had a name and one that lost its last are byte-identical.

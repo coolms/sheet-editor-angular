@@ -15,7 +15,7 @@ const RED: Pick<ConditionalDto, 'background'> = { background: '#FFCCCC' };
 
 describe('answering one rule', () => {
     /**
-     * ⚠️ The trap: as STRINGS, "10" sorts below "9". A grid that compared text
+     *  The trap: as STRINGS, "10" sorts below "9". A grid that compared text
      * would put every two-digit number below every one-digit one and colour
      * exactly the wrong rows.
      */
@@ -70,7 +70,7 @@ describe('which rule a cell wears', () => {
     };
 
     /**
-     * ⚠️ FIRST match wins, in the author's order -- as Excel does. Written the
+     *  FIRST match wins, in the author's order -- as Excel does. Written the
      * other way round, everything over 60 is amber and nothing is ever red.
      */
     it('takes the first rule that matches, not the last', () => {

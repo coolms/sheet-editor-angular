@@ -30,7 +30,7 @@ export type FormulaNode =
     /**
      * A defined name used as a value: `SUM(items_amount)`.
      *
-     * ⚠️ Distinct from `call`, which is a name FOLLOWED BY `(`. This one stands
+     *  Distinct from `call`, which is a name FOLLOWED BY `(`. This one stands
      * for a range the workbook declares elsewhere, and resolving it needs the
      * document — so the parser records the name and the evaluator looks it up.
      */
