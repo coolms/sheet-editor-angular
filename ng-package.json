@@ -3,6 +3,7 @@
   "dest": "dist",
   "assets": [
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "lib": {
