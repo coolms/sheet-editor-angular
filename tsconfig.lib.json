@@ -21,7 +21,14 @@
         "sourceMap": true,
         "paths": {
             "@coolms/core-angular": ["../core-angular/dist"],
-            "@coolms/ui-angular": ["../ui-angular/dist"]
+            "@coolms/ui-angular": ["../ui-angular/dist"],
+            // OPTIONAL peer: only the cell font picker reads it, and it is
+            // loaded dynamically so a consumer without it still gets an
+            // editor. Named here for the same reason as the others -- the
+            // package resolves its siblings from their built output, never
+            // from npm, because `node_modules` is a symlink to the admin's
+            // and exactly one Angular tree may be in play.
+            "@coolms/document-engine": ["../document-engine/dist"]
         }
     },
     "angularCompilerOptions": {

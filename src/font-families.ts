@@ -1,4 +1,14 @@
-import { FONT_MANIFEST_ASSET, offeredFontFamilies, type FontManifest } from '@coolms/document-engine';
+/**
+ * Type-only, so nothing from the engine reaches the emitted bundle.
+ *
+ * `@coolms/document-engine` is declared an OPTIONAL peer, and a static import
+ * made that a lie: ng-packagr emits one fesm bundle with no code splitting, so
+ * a top-level import must resolve for every consumer while `optional` tells
+ * npm not to install it. The module is loaded on demand below instead --
+ * which costs nothing, because this path was already async and already had to
+ * survive the manifest not arriving.
+ */
+import type { FontManifest } from '@coolms/document-engine';
 
 /**
  * The families this editor offers, read from the platform's font manifest.
@@ -33,12 +43,16 @@ export function offeredFamilies(): Promise<readonly string[]> {
     // Memoised on the module rather than per dialog: the sheet dialog is opened
     // and closed repeatedly, and re-fetching a static asset each time is a
     // request nobody asked for.
-    return once ??= fetchManifest()
-        .then((manifest) => offeredFontFamilies(manifest))
+    return once ??= import('@coolms/document-engine')
+        .then(async (engine) => engine.offeredFontFamilies(
+            await fetchManifest(engine.FONT_MANIFEST_ASSET),
+        ))
         .catch((error: unknown) => {
             // Not rethrown: an empty list leaves the select at "Default", which
             // is a workbook that inherits -- an editor that will not open
             // because a font list did not arrive would be the worse failure.
+            // The optional peer being absent altogether lands here too, and
+            // means the same thing to the person editing the sheet.
             console.error('[coolms-sheet-editor] the font manifest failed to load; only the default family is offered', error);
 
             // Cleared so the NEXT open tries again; a transient 503 should not
@@ -49,10 +63,10 @@ export function offeredFamilies(): Promise<readonly string[]> {
         });
 }
 
-async function fetchManifest(): Promise<FontManifest> {
-    const response = await fetch(FONT_MANIFEST_ASSET);
+async function fetchManifest(asset: string): Promise<FontManifest> {
+    const response = await fetch(asset);
     if (!response.ok) {
-        throw new Error(`Could not load ${FONT_MANIFEST_ASSET}: HTTP ${response.status}`);
+        throw new Error(`Could not load ${asset}: HTTP ${response.status}`);
     }
 
     return await response.json() as FontManifest;

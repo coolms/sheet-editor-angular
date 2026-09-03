@@ -12,6 +12,9 @@ npm install @coolms/sheet-editor-angular @coolms/ui-angular @coolms/core-angular
 
 Angular 22, `@angular/cdk`, NGXS 22 and RxJS 7 are peers.
 
+`@coolms/document-engine` is an **optional** peer, used only for the font
+catalogue the cell font picker reads.
+
 ## Use
 
 Register it as the handler for spreadsheet MIME types, and the file surfaces
@@ -42,11 +45,12 @@ component.
 ## Why it is its own package
 
 It lived in `@coolms/ui-angular` until it was ~3,850 lines, which is already
-larger than several packages beside it. What settled it was what comes next: a
-formula engine, an Excel/Sheets-style formula helper, filtering, and form
-element types. All of that lands here, and inside the UI kit it would have
-churned the kit's public surface — and the kit's version number — every time
-a spreadsheet feature moved.
+larger than several packages beside it. What settled it was what came next —
+and it has since landed here rather than in the kit: the formula engine and
+its parser, an Excel/Sheets-style formula helper, filtering, conditional
+formatting, number formats, defined names, find-and-replace and clipboard
+handling. Inside the UI kit every one of those would have churned the kit's
+public surface, and its version number, each time a spreadsheet feature moved.
 
 ## Building it
 
