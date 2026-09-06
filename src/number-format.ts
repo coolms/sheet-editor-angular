@@ -4,7 +4,7 @@
  * Two callers need this and they are the reason it exists at all:
  *
  * 1. **The grid.** A `.xlsx` stores a date as the SERIAL NUMBER its format
- *    describes, and the importer keeps it that way on purpose — converting to a
+ *    describes, and the importer keeps it that way on purpose -- converting to a
  *    date string would discard the format and make the value unarithmetic. So
  *    until this existed, an imported invoice showed `46255` where the generated
  *    document showed `21/08/2026`. The editor was not showing the document.
@@ -14,7 +14,7 @@
  *  **An unrecognised format returns the RAW value.** OOXML's format grammar
  * is far larger than this, and a `.dsheet` may carry any code an author
  * hand-wrote. Rendering a code we half-understand would put a number on screen
- * that the document does not agree with — silently, and in the one place an
+ * that the document does not agree with -- silently, and in the one place an
  * author has no way to check. Showing the underlying value is honest: it is
  * plainly not the final look, and it is never a wrong answer.
  */
@@ -23,7 +23,7 @@
  * Excel's day zero, and its famous mistake.
  *
  * Serial 1 is 1 January 1900. Excel also believes 1900 was a leap year, so
- * serial 60 is "29 February 1900" — a day that did not happen. Every date after
+ * serial 60 is "29 February 1900" -- a day that did not happen. Every date after
  * it is therefore offset by one from a naive count, which is why the two
  * branches below exist rather than one addition. The bug is thirty years old,
  * every spreadsheet reproduces it deliberately, and a converter that quietly
@@ -34,7 +34,7 @@ const PHANTOM_LEAP_DAY = 60;
 const MS_PER_DAY = 86_400_000;
 /** Serial 61 (1 March 1900) onwards counts from here. */
 const EPOCH_AFTER = Date.UTC(1899, 11, 30);
-/** Serials 1..59 count from here instead — the phantom day is not yet in play. */
+/** Serials 1..59 count from here instead -- the phantom day is not yet in play. */
 const EPOCH_BEFORE = Date.UTC(1899, 11, 31);
 
 export interface DateParts {
@@ -114,8 +114,8 @@ const NUMBER_CHARS = /[0#?]/;
 /**
  * Split one section of a format code into literals and tokens.
  *
- * Returns null for anything this does not understand — an elapsed-time
- * `[h]`, a fraction `# ?/?`, a scientific `E+00` — so the caller can fall back
+ * Returns null for anything this does not understand -- an elapsed-time
+ * `[h]`, a fraction `# ?/?`, a scientific `E+00` -- so the caller can fall back
  * to the raw value rather than render an approximation of it.
  */
 function pieces(section: string): Piece[] | null {
@@ -151,7 +151,7 @@ function pieces(section: string): Piece[] | null {
             if (end < 0) return null;
             const inside = section.slice(i + 1, end);
             i = end + 1;
-            // `[$€-407]` is a currency symbol and a locale; the symbol is the
+            // `[$EUR-407]` is a currency symbol and a locale; the symbol is the
             // half that shows. `[Red]` is a colour the grid already owns, so it
             // is dropped rather than obeyed. `[h]` is elapsed time and is a
             // different clock entirely -- not understood, so: raw value.
@@ -161,8 +161,8 @@ function pieces(section: string): Piece[] | null {
             }
             if (COLOUR.test(inside)) continue;
 
-            //  NOT "any word is a colour". `[h]` is elapsed time — a clock
-            // that counts past 24 hours — and treating it as an unknown colour
+            //  NOT "any word is a colour". `[h]` is elapsed time -- a clock
+            // that counts past 24 hours -- and treating it as an unknown colour
             // dropped the bracket and rendered `[h]:mm` as minutes alone, which
             // is a plausible wrong time. An unrecognised bracket is
             // UNSUPPORTED, and unsupported means the raw value.
@@ -176,7 +176,7 @@ function pieces(section: string): Piece[] | null {
 
         if (/[eE]/.test(ch) && /[+-]/.test(section[i + 1] ?? '')) return null;
 
-        // A digit placeholder takes the whole numeric pattern with it —
+        // A digit placeholder takes the whole numeric pattern with it --
         // `#,##0.00` is ONE token, because the point and the commas are part of
         // the shape of the number and not decoration around it. Splitting them
         // off as literals loses where the decimal point was, and the number
@@ -392,7 +392,7 @@ export function formatCellValue(value: string, code: string | undefined): string
     const number = asNumber(value);
     if (number === null) return value;
 
-    // Positive; negative; zero; text — Excel's four, and a code may give one,
+    // Positive; negative; zero; text -- Excel's four, and a code may give one,
     // two or three of them. A negative value with no section of its own uses
     // the positive one with a minus in front, which `renderNumber` does.
     const parts = sections(code);
@@ -408,7 +408,7 @@ export function formatCellValue(value: string, code: string | undefined): string
     const hasNumber = NUMBER_CHARS.test(tokens);
 
     // Both at once is a grammar this does not read; neither means the section is
-    // pure literal text, which IS the answer — `;;;"paid"` renders "paid".
+    // pure literal text, which IS the answer -- `;;;"paid"` renders "paid".
     if (hasDate && hasNumber) return value;
     if (!hasDate && !hasNumber) return list.map((p) => (p.kind === 'literal' ? p.text : '')).join('');
 
@@ -430,7 +430,7 @@ export function formatCellValue(value: string, code: string | undefined): string
  *
  * A spreadsheet shows `21/08/2026` in the formula bar of a date cell, not
  * `46255`. The serial is the truth on disk and nobody wants to type one, so the
- * edit form of a date is the date — and {@link parseDateInput} turns it back.
+ * edit form of a date is the date -- and {@link parseDateInput} turns it back.
  * Every other format edits as the value it stores, which is what Excel does
  * with `1234.5` under `#,##0.00`.
  */
@@ -438,7 +438,7 @@ export function editForm(value: string, code: string | undefined): string {
     return isDateFormat(code) ? formatCellValue(value, code) : value;
 }
 
-/** `21/08/2026`, `2026-08-21`, `21.08.2026` — the ways a date is typed. */
+/** `21/08/2026`, `2026-08-21`, `21.08.2026` -- the ways a date is typed. */
 const TYPED_DATE = /^(\d{1,4})[./-](\d{1,2})[./-](\d{1,4})$/;
 
 /**

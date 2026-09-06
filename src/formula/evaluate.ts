@@ -26,7 +26,7 @@ import {
     type CellValue,
 } from './values';
 
-/** A DTMPL token: `{var:…}`, `{t:…}` and friends. Anything in braces counts. */
+/** A DTMPL token: `{var:...}`, `{t:...}` and friends. Anything in braces counts. */
 const DTMPL_TOKEN = /\{[a-z]+:[^}]*\}/iu;
 
 export interface EvaluationOptions {
@@ -348,7 +348,7 @@ function rangeBox(
  * `Sheet1!$B$2:$B$3` -> the node it denotes. Null when it is not a range at all.
  *
  *  The `$` signs are stripped rather than honoured. They mean "do not move me
- * when this formula is COPIED", which no evaluation here performs — and a
+ * when this formula is COPIED", which no evaluation here performs -- and a
  * defined name is written with them by every editor, so treating `$B$2` as a
  * different reference from `B2` would make every imported name unresolvable.
  *

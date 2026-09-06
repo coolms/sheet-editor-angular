@@ -1,5 +1,5 @@
 /**
- * The formula engine, pinned against what a SPREADSHEET does — not against
+ * The formula engine, pinned against what a SPREADSHEET does -- not against
  * what TypeScript's operators happen to do.
  *
  * The cases that earn their place are the ones where those two disagree:
@@ -94,7 +94,7 @@ describe('operator precedence, where a spreadsheet and TypeScript disagree', () 
 
     it('makes ^ LEFT-associative: 2^3^2 is 64, not 512', () => {
         //  This test used to assert 512, which is what TypeScript's `**`
-        // does — the very thing this file's header says it exists not to
+        // does -- the very thing this file's header says it exists not to
         // follow. A spreadsheet reads `2^3^2` as `(2^3)^2`. Excel and
         // LibreOffice both answer 64.
         expect(shown('2^3^2')).toBe('64');

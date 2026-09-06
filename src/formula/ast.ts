@@ -18,7 +18,7 @@ export type FormulaNode =
     /** `A1:B7`, normalised so `from` is the top-left corner. */
     | { readonly kind: 'range'; readonly from: string; readonly to: string; readonly sheet?: string }
     | { readonly kind: 'unary'; readonly op: '-' | '+'; readonly operand: FormulaNode }
-    /** `50%` — postfix, and it binds tighter than `^`. */
+    /** `50%` -- postfix, and it binds tighter than `^`. */
     | { readonly kind: 'percent'; readonly operand: FormulaNode }
     | {
         readonly kind: 'binary';
@@ -32,7 +32,7 @@ export type FormulaNode =
      *
      *  Distinct from `call`, which is a name FOLLOWED BY `(`. This one stands
      * for a range the workbook declares elsewhere, and resolving it needs the
-     * document — so the parser records the name and the evaluator looks it up.
+     * document -- so the parser records the name and the evaluator looks it up.
      */
     | { readonly kind: 'name'; readonly name: string };
 

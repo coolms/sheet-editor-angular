@@ -13,7 +13,7 @@ import {
 describe('date serials', () => {
     /**
      * Excel believes 1900 was a leap year. Serial 60 is a day that did not
-     * happen, and every date after it is offset by one from a naive count —
+     * happen, and every date after it is offset by one from a naive count --
      * which is why a converter that quietly fixed the bug would be a day out
      * from the workbook for every date since February 1900.
      */
@@ -91,7 +91,7 @@ describe('formatting a value', () => {
         expect(formatCellValue('9.5', '[$€-407]#,##0.00')).toBe('€9.50');
     });
 
-    /** A negative section carries its own sign — brackets instead of a minus. */
+    /** A negative section carries its own sign -- brackets instead of a minus. */
     it('uses the negative section when there is one', () => {
         expect(formatCellValue('-1234.5', '#,##0.00;(#,##0.00)')).toBe('(1,234.50)');
         expect(formatCellValue('-1234.5', '#,##0.00')).toBe('-1,234.50');
@@ -140,7 +140,7 @@ describe('formatting a value', () => {
     /**
      *  The safety property of the whole file. OOXML's grammar is far larger
      * than this subset, and a rendered guess is a number the document does not
-     * agree with — shown in the one place an author cannot check it.
+     * agree with -- shown in the one place an author cannot check it.
      */
     describe('a code it does not understand', () => {
         it('returns the raw value rather than an approximation', () => {

@@ -110,7 +110,7 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
  *
  * ## What it deliberately is not
  *
- * Not a spreadsheet ENGINE. Nothing here evaluates a formula — `=B4*C4` is
+ * Not a spreadsheet ENGINE. Nothing here evaluates a formula -- `=B4*C4` is
  * stored, not computed, exactly as the model stores it and the renderer emits
  * it. Excel and LibreOffice compute it when the generated workbook opens.
  * Growing this into a calculator is the temptation names in its
@@ -120,7 +120,7 @@ import { CmsLoaderComponent } from '@coolms/core-angular';
  *
  * A cell's `numberFormat` is the author's TYPE DECLARATION: `@` is what
  * keeps `00412` an order number rather than the integer 412. This edits a
- * cell's TEXT only and carries formatting through untouched — see
+ * cell's TEXT only and carries formatting through untouched -- see
  * {@link inputToCell}. The format is not editable here yet; losing it silently
  * would be far worse than not offering it.
  */
@@ -1665,12 +1665,12 @@ export class SheetEditorDialogComponent {
      * Rendered height of a row with no stated height, in CSS pixels.
      *
      * PINNED as a constant and applied to every row, because virtualisation
-     * needs to know where row N is WITHOUT measuring it — a content-driven
+     * needs to know where row N is WITHOUT measuring it -- a content-driven
      * height cannot be predicted, and a scroll position computed from a guess
      * puts the wrong rows under the pointer.
      *
-     *  This is 26px ≈ 19.5pt, and `SheetDocumentWriter::DEFAULT_ROW_HEIGHT`
-     * is 12.8pt — so an untouched row is TALLER on the canvas than in the
+     *  This is 26px ~= 19.5pt, and `SheetDocumentWriter::DEFAULT_ROW_HEIGHT`
+     * is 12.8pt -- so an untouched row is TALLER on the canvas than in the
      * generated workbook. That divergence predates this change and is left
      * alone deliberately: matching the workbook would cramp a row that has to
      * hold a text input, and matching the canvas would restyle every sheet
@@ -1690,7 +1690,7 @@ export class SheetEditorDialogComponent {
     /**
      * Columns the author has scrolled into being.
      *
-     * Rows no longer need this — virtualisation means the row count costs
+     * Rows no longer need this -- virtualisation means the row count costs
      * nothing to raise, so the floor is simply a spreadsheet's worth. COLUMNS
      * are still all rendered, so they still grow on demand.
      */
@@ -1708,7 +1708,7 @@ export class SheetEditorDialogComponent {
      */
     private static readonly DEFAULT_COL_PX = 141;
 
-    /** Columns kept rendered beyond the viewport. Fewer than rows — they are wider. */
+    /** Columns kept rendered beyond the viewport. Fewer than rows -- they are wider. */
     private static readonly COL_BUFFER = 3;
 
     /**
@@ -1748,7 +1748,7 @@ export class SheetEditorDialogComponent {
     });
 
     /**
-     * Rows that state a height, sorted — the only rows whose position differs
+     * Rows that state a height, sorted -- the only rows whose position differs
      * from the uniform stride.
      *
      * Kept as a sorted list rather than consulted per row: the map is sparse
@@ -1770,8 +1770,8 @@ export class SheetEditorDialogComponent {
      *
      * ## Why they merge here rather than at each use
      *
-     * Three things need a row's height — the offset arithmetic, the total
-     * scroll height, and the row itself — and virtualisation only works while
+     * Three things need a row's height -- the offset arithmetic, the total
+     * scroll height, and the row itself -- and virtualisation only works while
      * all three agree. Merging once means a wrapped row cannot be tall in the
      * paint and default in the arithmetic, which is precisely the drift that
      * makes a scrollbar wander away from the rows under it.
@@ -1779,7 +1779,7 @@ export class SheetEditorDialogComponent {
      * **A hand-set height WINS over the measurement**, which is Excel's rule,
      * not a preference: a row carrying `customHeight` keeps it and clips its
      * content, and only a row that never stated one auto-fits. Written in that
-     * order — measured first, explicit second — so the last writer wins.
+     * order -- measured first, explicit second -- so the last writer wins.
      */
     private readonly effectiveRowPx = computed<ReadonlyMap<number, number>>(() => {
         const sheet = this.doc()?.sheets[this.activeSheet()];
@@ -1817,7 +1817,7 @@ export class SheetEditorDialogComponent {
      * given the column's width and the cell's font wraps exactly as the cell
      * will, because it IS the same engine doing it.
      *
-     * Only cells that state `wrap` are measured, and a row takes its tallest —
+     * Only cells that state `wrap` are measured, and a row takes its tallest --
      * so a sheet with no wrapping pays nothing, which is nearly every sheet.
      */
     private readonly wrappedRowPx = computed<ReadonlyMap<number, number>>(() => {
@@ -1846,7 +1846,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * One reusable off-screen probe, inside the editor so it inherits the
-     * grid's own font — the measurement has to be of THIS text in THIS face,
+     * grid's own font -- the measurement has to be of THIS text in THIS face,
      * and a probe on `document.body` would be measuring the admin chrome's.
      */
     private measureProbe?: HTMLElement;
@@ -1893,7 +1893,7 @@ export class SheetEditorDialogComponent {
         );
     }
 
-    /** The `td`'s top plus bottom border — see {@link measureWrapped}. */
+    /** The `td`'s top plus bottom border -- see {@link measureWrapped}. */
     private static readonly CELL_BORDER_PX = 2;
 
     /** Pixels from the top of the grid to the top of `row` (1-based). */
@@ -1950,7 +1950,7 @@ export class SheetEditorDialogComponent {
      * MERGE reaches into.
      *
      * The merge clause is not an optimisation. A merged block is drawn by its
-     * anchor with a `rowspan`, and the rows it covers emit no `<td>` at all —
+     * anchor with a `rowspan`, and the rows it covers emit no `<td>` at all --
      * so a window that started below an anchor would render rows whose cells
      * had been swallowed by a block that was no longer on the page, leaving a
      * hole. Merges are few, so widening to include them is cheap.
@@ -1961,7 +1961,7 @@ export class SheetEditorDialogComponent {
         const d = SheetEditorDialogComponent.DEFAULT_ROW_PX;
 
         // Approximate the window from the uniform stride, then widen generously
-        // — exactness here would need a search per scroll event, and the buffer
+        // -- exactness here would need a search per scroll event, and the buffer
         // already absorbs the drift a handful of custom heights can introduce.
         let first = Math.max(1, Math.floor(this.scrollTop() / d) - buffer);
         let last = Math.min(rows, Math.ceil((this.scrollTop() + this.viewportHeight()) / d) + buffer);
@@ -2005,7 +2005,7 @@ export class SheetEditorDialogComponent {
     });
 
     /**
-     * Columns that state a width, sorted by INDEX — the column axis's twin of
+     * Columns that state a width, sorted by INDEX -- the column axis's twin of
      * {@link heightOverrides}, and sparse for the same reason.
      */
     private readonly widthOverrides = computed(() => {
@@ -2041,7 +2041,7 @@ export class SheetEditorDialogComponent {
     });
 
     /**
-     * The columns actually rendered — the horizontal twin of
+     * The columns actually rendered -- the horizontal twin of
      * {@link visibleRows}, merge widening included for the same reason: a
      * merge's covered columns emit no `<td>`, so a window starting right of an
      * anchor would leave a hole.
@@ -2148,7 +2148,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * Cells in one rendered row span three boxes: the left spacer, the visible
-     * columns, and the right spacer — plus the row header. The row spacers have
+     * columns, and the right spacer -- plus the row header. The row spacers have
      * to cover all of them or the table's column count disagrees between rows.
      */
     protected gridColspan(): number {
@@ -2191,7 +2191,7 @@ export class SheetEditorDialogComponent {
         // SCROLL BOX is still real: 1,048,576 rows at 26px is 27 million pixels,
         // past what some browsers will lay out, and a scrollbar over a million
         // rows cannot be aimed anyway. Growing keeps the sheet effectively
-        // endless while the scrollbar stays usable — which is what Sheets does,
+        // endless while the scrollbar stays usable -- which is what Sheets does,
         // and for the same reason.
         if (el.scrollHeight - el.scrollTop - el.clientHeight < SheetEditorDialogComponent.GROW_THRESHOLD_PX) {
             this.grownRows.update(n => n + SheetEditorDialogComponent.GROW_ROWS);
@@ -2468,7 +2468,7 @@ export class SheetEditorDialogComponent {
 
     protected readonly formats = NUMBER_FORMATS;
 
-    /** The cell the toolbar acts on — focus IS selection in a grid of inputs. */
+    /** The cell the toolbar acts on -- focus IS selection in a grid of inputs. */
     protected readonly activeRef = signal('');
 
     private activeCell(): SheetCellDto | undefined {
@@ -2490,7 +2490,7 @@ export class SheetEditorDialogComponent {
 
     protected applyFormat(code: string): void {
         // The select uses '' for General, because an <option> cannot carry
-        // undefined — mapping it back here keeps the model's "absent means
+        // undefined -- mapping it back here keeps the model's "absent means
         // General" rule rather than storing an empty format code.
         this.replaceActive(cell => withNumberFormat(cell, '' === code ? undefined : code));
     }
@@ -2514,7 +2514,7 @@ export class SheetEditorDialogComponent {
      * PLATFORM MANIFEST rather than typed out.
      *
      * The name is what lands in the workbook, and the workbook is opened
-     * somewhere else — so the useful list is the one Excel and LibreOffice both
+     * somewhere else -- so the useful list is the one Excel and LibreOffice both
      * resolve, not whatever happens to be installed on the author's machine.
      * An empty choice means "inherit", which is not the same as naming the
      * default: see the model's note on why the default is never stored.
@@ -2533,7 +2533,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * Vertical alignment, which only becomes observable once a row is TALLER
-     * than its content — wrapping and a hand-set row height being the two ways
+     * than its content -- wrapping and a hand-set row height being the two ways
      * to cause that. Offered next to wrap for exactly that reason.
      */
     protected readonly verticalAlignments = [
@@ -2560,7 +2560,7 @@ export class SheetEditorDialogComponent {
      * Apply one style to the active cell. An empty value CLEARS it.
      *
      * Clicking the alignment that is already set clears it too, which is how a
-     * toggle should behave and the only way back to "inherit" — the buttons are
+     * toggle should behave and the only way back to "inherit" -- the buttons are
      * a three-way choice with no fourth button for "none".
      */
     protected applyStyle(
@@ -2582,7 +2582,7 @@ export class SheetEditorDialogComponent {
 
     /**
      * A colour input can only report a colour, never "none", so removing one
-     * needs its own control — without this an author who shaded a cell could
+     * needs its own control -- without this an author who shaded a cell could
      * not unshade it.
      */
     protected clearColours(): void {
@@ -2590,7 +2590,7 @@ export class SheetEditorDialogComponent {
     }
 
     /**
-     * Rendered height for a row — the stated one, or the pinned default.
+     * Rendered height for a row -- the stated one, or the pinned default.
      *
      * Never null now. A content-sized row cannot be predicted, and
      * virtualisation has to know where row N begins without measuring it: if
@@ -2598,7 +2598,7 @@ export class SheetEditorDialogComponent {
      * scrollbar drifts away from the rows under it.
      */
     protected rowPx(row: number): number {
-        // The SAME map the offsets and the total height are built from — see
+        // The SAME map the offsets and the total height are built from -- see
         // effectiveRowPx. Reading `rowHeights` directly here (as this did until
  // Doing so would paint an auto-fitted row at its wrapped height while the
         // arithmetic still believed it was 26px.
@@ -2652,7 +2652,7 @@ export class SheetEditorDialogComponent {
      * The input's own styling, as ONE object for a single `[style]` binding.
      *
      * Returns null when the cell states nothing, which is the overwhelmingly
-     * common case — an unstyled grid then binds null everywhere instead of a
+     * common case -- an unstyled grid then binds null everywhere instead of a
      * fresh object per cell per change detection.
      */
     protected styleAt(ref: string): Record<string, string> | null {
@@ -2674,7 +2674,7 @@ export class SheetEditorDialogComponent {
      * input.
      *
      * `vertical-align` on a table cell distributes whatever height the row has
-     * spare — so it does nothing until a row is taller than its content, which
+     * spare -- so it does nothing until a row is taller than its content, which
      * is precisely when an author asks for it: a hand-set row height, or a
      * merged cell spanning rows. The three values map to CSS one-for-one, so
      * there is no translation table to keep in step.
@@ -2775,7 +2775,7 @@ export class SheetEditorDialogComponent {
         this.activeSheet.set(name);
         this.activeRef.set('');
         this.anchorRef.set('');
-        // Growth belongs to a scroll session, not to the document — carrying it
+        // Growth belongs to a scroll session, not to the document -- carrying it
         // over would render extra blank columns onto a sheet just opened. The
         // scroll position resets with it, or the new sheet opens showing a
         // window computed for the old one's length.
@@ -2862,8 +2862,8 @@ export class SheetEditorDialogComponent {
     /**
      * The other end of a range selection.
      *
-     * Focus alone cannot express a range in a grid of inputs — only one can be
-     * focused — so a shift-click keeps this where it was and moves `activeRef`,
+     * Focus alone cannot express a range in a grid of inputs -- only one can be
+     * focused -- so a shift-click keeps this where it was and moves `activeRef`,
      * exactly as a spreadsheet does. A plain click collapses the two.
      */
     protected readonly anchorRef = signal('');
@@ -3283,7 +3283,7 @@ export class SheetEditorDialogComponent {
      * the range, and a focus for any other collapses it, which is what a focus
      * on another cell means.
      *
-     * mousedown is what carries the modifier — `focus` events do not.
+     * mousedown is what carries the modifier -- `focus` events do not.
      */
     private extendingFor: string | null = null;
 
@@ -3340,11 +3340,11 @@ export class SheetEditorDialogComponent {
         // selection" gesture: the browser highlights characters in the cell the
         // author started from and suppresses the focus change, so without this
         // the second click did nothing at all to the selection. Synthetic
-        // `mousedown`/`focus` events in a spec never reproduce it — the first
+        // `mousedown`/`focus` events in a spec never reproduce it -- the first
         // version of this passed its unit test and did not work in the admin.
         //
         // Suppressing the default also means no `focus` fires, so `activeRef` is
-        // moved here and `anchorRef` is left exactly where it was — which is the
+        // moved here and `anchorRef` is left exactly where it was -- which is the
         // range. The `extending` flag stays as a guard for any browser that
         // focuses anyway.
         event.preventDefault();
@@ -3993,7 +3993,7 @@ export class SheetEditorDialogComponent {
         this.mutateSheet(sheet => withDeletedColumn(sheet, cell.column));
     }
 
-    /** Contents only — the layout around the cells is not what was selected. */
+    /** Contents only -- the layout around the cells is not what was selected. */
     protected clearContents(): void {
         const range = this.selectionRange() ?? this.contextRef();
         if (null === range) return;
@@ -4122,7 +4122,7 @@ export class SheetEditorDialogComponent {
     // ---- Find and replace --------------------------------------------------
     //
     // Over what a cell HOLDS, not what it computes -- see `find-replace.ts`.
-    // The job this exists for is renaming a `{var:…}` token across a template,
+    // The job this exists for is renaming a `{var:...}` token across a template,
     // and a token has no computed value to search.
 
     protected readonly findOpen = signal(false);
@@ -4576,7 +4576,7 @@ export class SheetEditorDialogComponent {
         this.commit({ ...doc });
     }
 
-    /** One option per line, blanks and duplicates removed — as the model does. */
+    /** One option per line, blanks and duplicates removed -- as the model does. */
     private splitOptions(raw: string): string[] {
         const out: string[] = [];
         for (const line of raw.split('\n')) {
@@ -4627,7 +4627,7 @@ export class SheetEditorDialogComponent {
         this.toggleFullScreen();
     }
 
-    /** A range to filter, or a filter to remove — either enables the button. */
+    /** A range to filter, or a filter to remove -- either enables the button. */
     protected canFilter(): boolean {
         return null !== this.selectionRange() || null !== this.activeFilter();
     }
@@ -4854,7 +4854,7 @@ export class SheetEditorDialogComponent {
      *
      * A bounds test rather than `refsInRange(...).includes(...)`: this runs for
      * every rendered cell on every change detection, and selecting a whole
-     * column — one click on a header — would otherwise make it quadratic in the
+     * column -- one click on a header -- would otherwise make it quadratic in the
      * sheet's size.
      */
     protected isInSelection(ref: string): boolean {
@@ -4868,7 +4868,7 @@ export class SheetEditorDialogComponent {
      *
      * `preventDefault` keeps the mousedown from moving focus into a cell input,
      * whose `focus` handler would immediately collapse the selection it just
-     * made — the same interaction that made shift-click load-bearing above.
+     * made -- the same interaction that made shift-click load-bearing above.
      *
      * `activeRef` takes the TOP cell and the anchor the bottom, so the toolbar
      * reads "A1" rather than "A20" while covering the identical range;
@@ -4934,7 +4934,7 @@ export class SheetEditorDialogComponent {
      * default, and starting the drag from "undefined" would make the first
      * mousemove jump the column to whatever the pointer offset happened to be.
      *
-     * Listeners go on the document, not the grip — a fast drag outranges a 6px
+     * Listeners go on the document, not the grip -- a fast drag outranges a 6px
      * target long before the mouse comes up, and a resize that stops tracking
      * because the pointer left the handle is worse than no resize at all.
      */
@@ -4999,7 +4999,7 @@ export class SheetEditorDialogComponent {
         this.anchorRef.set(this.activeRef());
     }
 
-    /** The column the width control acts on — taken from the focused cell. */
+    /** The column the width control acts on -- taken from the focused cell. */
     protected activeColumn(): string {
         return parseRef(this.activeRef())?.column ?? '';
     }
@@ -5034,8 +5034,8 @@ export class SheetEditorDialogComponent {
     /**
      * Store a width for the active column. Blank clears it.
      *
-     * The model refuses a non-positive width — Excel reads 0 as a HIDDEN column
-     * — so a stray `0` leaves the document untouched rather than making the
+     * The model refuses a non-positive width -- Excel reads 0 as a HIDDEN column
+     * -- so a stray `0` leaves the document untouched rather than making the
      * column disappear from the generated workbook.
      */
     protected applyWidth(raw: string): void {

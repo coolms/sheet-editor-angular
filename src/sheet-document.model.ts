@@ -1,8 +1,8 @@
 /**
  * The `.dsheet` document, and the A1 arithmetic a grid needs.
  *
- * Mirrors the backend's `SheetDocument` / `SheetCell` exactly — same key names,
- * same sparseness, same "value XOR formula" rule — because the file this reads
+ * Mirrors the backend's `SheetDocument` / `SheetCell` exactly -- same key names,
+ * same sparseness, same "value XOR formula" rule -- because the file this reads
  * is the same file the renderer reads. Anything invented here would survive the
  * editor and fail at generation time, where nobody is watching.
  *
@@ -18,7 +18,7 @@ export interface SheetCellDto {
     value?: string;
     /** An A1 formula WITHOUT its leading `=`. */
     formula?: string;
-    /** An OOXML number-format code — `@` declares text. */
+    /** An OOXML number-format code -- `@` declares text. */
     numberFormat?: string;
     bold?: boolean;
     italic?: boolean;
@@ -26,14 +26,14 @@ export interface SheetCellDto {
     fontFamily?: string;
     /** POINTS, as Excel and the toolbar both speak. */
     fontSize?: number;
-    /** Text colour, `#RRGGBB` upper-case — the backend normalises the spelling. */
+    /** Text colour, `#RRGGBB` upper-case -- the backend normalises the spelling. */
     color?: string;
     /** Solid fill, `#RRGGBB`. Absent means NO fill, which is not the same as white. */
     background?: string;
     align?: CellAlign;
     /**
-     * Hyperlink target. May carry DTMPL tokens — `{var:order.trackingUrl}` is
-     * the point of putting one in a template — so it is NOT validated here.
+     * Hyperlink target. May carry DTMPL tokens -- `{var:order.trackingUrl}` is
+     * the point of putting one in a template -- so it is NOT validated here.
      * The backend's writer is the gate, at the last moment before the URL
      * enters a workbook someone will click.
      */
@@ -43,7 +43,7 @@ export interface SheetCellDto {
      *
      * The switch between Excel's two behaviours: unwrapped, text SPILLS across
      * empty neighbours and clips at the first occupied one; wrapped, it breaks
-     * inside the cell and the row grows to hold it. Absent is off — `wrapText`
+     * inside the cell and the row grows to hold it. Absent is off -- `wrapText`
      * is a boolean in OOXML with a real default, so there is no third state.
      */
     wrap?: boolean;
@@ -54,7 +54,7 @@ export interface SheetCellDto {
      * `"thin #FF0000"`.
      *
      * Per EDGE because Excel rules each side separately and so does every
-     * instruction an author gives — "underline the header", "box the table". A
+     * instruction an author gives -- "underline the header", "box the table". A
      * box round a RANGE is therefore stored as an edge on each cell of its
      * perimeter, which is how OOXML stores it too; the editor offers "outer"
      * and "all" as gestures over a selection rather than as a stored shape.
@@ -70,7 +70,7 @@ export type CellEdge = (typeof CELL_EDGES)[number];
 /**
  * The line styles the writer can express, with what each looks like in CSS.
  *
- * OOXML's vocabulary trimmed to the ones an author asks for by name — `hair`
+ * OOXML's vocabulary trimmed to the ones an author asks for by name -- `hair`
  * and the slanted/medium-dashed family exist in the format, nobody draws them
  * on purpose, and every one offered is one more thing the control must explain.
  */
@@ -114,7 +114,7 @@ export interface SheetDto {
     columnWidths?: Record<string, number>;
     /**
      * Row number => height in POINTS. Keyed by number, so it must survive as a
-     * JSON object — the backend casts it for exactly that reason.
+     * JSON object -- the backend casts it for exactly that reason.
      */
     rowHeights?: Record<string, number>;
     merges?: string[];
@@ -126,19 +126,19 @@ export interface SheetDto {
      * here would let the editor express a workbook Excel refuses to open.
      *
      * It is a DECLARATION, not a view state. What it buys is dropdowns in the
-     * generated workbook over the right rows — including rows a `{loop:}` band
+     * generated workbook over the right rows -- including rows a `{loop:}` band
      * has not created yet, which the backend grows the range to cover. Which
      * values are hidden while editing is not stored, because a template has no
      * data to hide yet.
      */
     autoFilter?: string;
     /**
-     * Range => the rule for what may be typed there — the sheet's form
+     * Range => the rule for what may be typed there -- the sheet's form
      * controls.
      *
      * Keyed by RANGE because OOXML is: a `<dataValidation>` carries an `sqref`
      * and covers every cell in it. A single cell is a legal key, unlike a merge
-     * or a filter — "this one cell is a dropdown" is the ordinary case.
+     * or a filter -- "this one cell is a dropdown" is the ordinary case.
      */
     validations?: Record<string, SheetValidationDto>;
 }
@@ -163,8 +163,8 @@ export interface SheetValidationDto {
 /**
  * What a checkbox writes into the cell.
  *
- * Excel has no checkbox validation type — a real one is a form control living
- * in a drawing part — so the backend emits a TRUE/FALSE list and this editor
+ * Excel has no checkbox validation type -- a real one is a form control living
+ * in a drawing part -- so the backend emits a TRUE/FALSE list and this editor
  * draws the tick. These are the two values that dropdown offers, stated in one
  * place so the grid and the writer cannot drift.
  */
@@ -181,7 +181,7 @@ export interface SheetDocumentDto {
      *
      *  The grid needs these to PREVIEW honestly. A formula is written through
      * to the `.xlsx` verbatim, so `SUM(items_amount)` renders correctly whether
-     * or not this editor understands it — and an editor that showed `#NAME?`
+     * or not this editor understands it -- and an editor that showed `#NAME?`
      * for a formula the document computes would be lying about the document.
      * Optional so a `.dsheet` written before names existed still loads.
      */
@@ -243,8 +243,8 @@ export function parseRef(ref: string): { column: string; row: number } | null {
  *
  *  COLUMNS are still all rendered, so their floor is a real cost and they
  * grow on demand instead. Column virtualisation is harder than row
- * virtualisation here — a `<colgroup>` sizes the table and every row would have
- * to agree on which columns it skips — and 26 columns is what an author expects
+ * virtualisation here -- a `<colgroup>` sizes the table and every row would have
+ * to agree on which columns it skips -- and 26 columns is what an author expects
  * to find, so the trade is left where it is rather than half-made.
  */
 export function gridExtent(
@@ -280,7 +280,7 @@ export function cellToInput(cell: SheetCellDto | undefined): string {
 /**
  * The reverse, preserving everything the grid does not edit.
  *
- * `numberFormat` and `bold` are carried through untouched — the number format
+ * `numberFormat` and `bold` are carried through untouched -- the number format
  * is the author's TYPE DECLARATION and losing it on an unrelated edit
  * would turn an order number back into arithmetic. Returning `null` for an
  * emptied cell keeps the document sparse, which is how the backend writes it.
@@ -331,7 +331,7 @@ export interface NumberFormatOption {
  * rather than the integer 412. The rest are presentation.
  *
  * Deliberately short. A curated list an operator can read beats a complete one
- * they cannot, and a code outside it is still preserved — see
+ * they cannot, and a code outside it is still preserved -- see
  * {@link isKnownFormat}.
  */
 export const NUMBER_FORMATS: readonly NumberFormatOption[] = [
@@ -346,8 +346,8 @@ export const NUMBER_FORMATS: readonly NumberFormatOption[] = [
 /**
  * Whether the toolbar can represent this code.
  *
- * A `.dsheet` may carry any OOXML format code — an author who hand-wrote
- * `#,##0.00\ [$€-407]` in the JSON has one the menu does not list. The editor
+ * A `.dsheet` may carry any OOXML format code -- an author who hand-wrote
+ * `#,##0.00\ [$EUR-407]` in the JSON has one the menu does not list. The editor
  * must SHOW that rather than display "General" and overwrite it on the next
  * unrelated change, which is how a silent loss happens.
  */
@@ -356,7 +356,7 @@ export function isKnownFormat(code: string | undefined): boolean {
 }
 
 /**
- * True when nothing is left worth storing — mirrors the backend's isEmpty().
+ * True when nothing is left worth storing -- mirrors the backend's isEmpty().
  *
  *  EVERY styling field counts. A cell holding only a background colour has no
  * text and is still something the author made on purpose; treating it as blank
@@ -384,7 +384,7 @@ function isBlank(cell: SheetCellDto): boolean {
  * Apply a number format, keeping everything else. `undefined` clears it back to
  * General. Returns null when the cell has nothing left to store.
  *
- * A format may be applied to a cell that does not exist yet — an author marks a
+ * A format may be applied to a cell that does not exist yet -- an author marks a
  * column as Text BEFORE typing into it, and that intent has to survive.
  */
 export function withNumberFormat(cell: SheetCellDto | undefined, code: string | undefined): SheetCellDto | null {
@@ -461,12 +461,12 @@ export function withStyle<K extends 'fontFamily' | 'fontSize' | 'color' | 'backg
 }
 
 /**
- * `#RRGGBB` upper-case — the same canonical form the backend's `SheetCell`
+ * `#RRGGBB` upper-case -- the same canonical form the backend's `SheetCell`
  * produces when it parses a `.dsheet`.
  *
  * A browser colour input emits LOWER case, so without this the editor wrote
- * `#ffee00` into a file the backend would rewrite as `#FFEE00`. Both work —
- * nothing compares colours as strings — but a re-save then shows a case-only
+ * `#ffee00` into a file the backend would rewrite as `#FFEE00`. Both work --
+ * nothing compares colours as strings -- but a re-save then shows a case-only
  * diff on a line nobody touched, which is noise in a source file an author
  * reads. One canonical form, decided by whoever writes it first.
  */
@@ -512,7 +512,7 @@ export function rowHeightOf(sheet: SheetDto, row: number): number | undefined {
 /**
  * Approximate pixels for a stored row height, so the grid SHOWS what the author
  * set. Heights are in POINTS, and a CSS pixel is 1/96in against a point's
- * 1/72in — the one conversion, unlike column widths, that is exact.
+ * 1/72in -- the one conversion, unlike column widths, that is exact.
  */
 export function rowHeightToPx(points: number): number {
     return Math.round(points * (96 / 72));
@@ -532,8 +532,8 @@ export const SHEET_NAME_MAX = 31;
 /**
  * The name a sheet will actually carry in the generated workbook.
  *
- * Mirrors the backend's `safeSheetName()` exactly — same forbidden characters,
- * same 31-character cap — so the tab an author names is the tab they get. The
+ * Mirrors the backend's `safeSheetName()` exactly -- same forbidden characters,
+ * same 31-character cap -- so the tab an author names is the tab they get. The
  * writer applies these rules whatever the editor does; normalising HERE is what
  * stops a name silently changing between the grid and the xlsx, which is the
  * same "what you see is what renders" rule that decides merge clearing.
@@ -571,7 +571,7 @@ export function withNewSheet(doc: SheetDocumentDto, desired: string): { doc: She
  * Rebuilding the map in order is the whole point: JS object keys iterate in
  * insertion order, the backend writes sheets in that same order, and
  * `SheetDocumentWriter` makes index 0 the ACTIVE sheet. Deleting and re-adding
- * would silently move a renamed sheet to the end of the workbook — and renaming
+ * would silently move a renamed sheet to the end of the workbook -- and renaming
  * the first sheet would hand the operator a different opening tab.
  *
  * A no-op rename, an unknown source, or a name already taken all return the
@@ -591,7 +591,7 @@ export function withRenamedSheet(doc: SheetDocumentDto, from: string, to: string
 }
 
 /**
- * Remove a sheet — never the last one.
+ * Remove a sheet -- never the last one.
  *
  * `SheetDocumentWriter::write()` throws on a document with no sheets, so an
  * editor that allowed it would produce a template that only fails at generation
@@ -633,7 +633,7 @@ export function parseRange(range: string): MergeBox | null {
  * The range spanning two cells, normalised so the top-left comes first.
  *
  * Normalising here rather than at the call site is what lets an author drag or
- * shift-click in ANY direction — up-left to bottom-right is the same merge as
+ * shift-click in ANY direction -- up-left to bottom-right is the same merge as
  * bottom-right to up-left, and a `D4:A1` written into the document would not
  * match the OOXML the renderer emits.
  */
@@ -650,8 +650,8 @@ export function rangeBetween(a: string, b: string): string | null {
  * The same answer as `refsInRange(range).includes(ref)` and the reason that call
  * is no longer made per-cell: the grid asks this once for EVERY rendered cell on
  * every change detection, so the list version is quadratic in the selection. A
- * whole-column selection — which the column headers now make a one-click gesture
- * — turns a 500-row sheet into millions of string comparisons per keystroke.
+ * whole-column selection -- which the column headers now make a one-click gesture
+ * -- turns a 500-row sheet into millions of string comparisons per keystroke.
  */
 export function rangeContains(range: string, ref: string): boolean {
     const box = parseRange(range);
@@ -695,7 +695,7 @@ export function mergeCovering(sheet: SheetDto, ref: string): string | null {
     return null;
 }
 
-/** True when `ref` is a merge's TOP-LEFT — the only cell of it that renders. */
+/** True when `ref` is a merge's TOP-LEFT -- the only cell of it that renders. */
 export function isMergeAnchor(range: string, ref: string): boolean {
     const box = parseRange(range);
     const cell = parseRef(ref);
@@ -818,8 +818,8 @@ function overlaps(a: MergeBox, b: MergeBox): boolean {
  * Add a merge, and CLEAR the cells it covers.
  *
  * Clearing is deliberate and is the honest choice here. A merged range keeps
- * only its top-left value — that is what `SheetDocumentWriter` does when it
- * renders, because PhpSpreadsheet's `mergeCells()` empties the rest — so a
+ * only its top-left value -- that is what `SheetDocumentWriter` does when it
+ * renders, because PhpSpreadsheet's `mergeCells()` empties the rest -- so a
  * document that quietly held values under a merge would render differently from
  * what the grid shows, which is the exact divergence this closed.
  * Excel behaves the same way and warns before it does.
@@ -850,7 +850,7 @@ export function withMerge(sheet: SheetDto, range: string): SheetDto {
     return { ...sheet, cells, merges: [...kept, range] };
 }
 
-/** Remove a merge. Cleared cells do NOT come back — there is nothing to restore. */
+/** Remove a merge. Cleared cells do NOT come back -- there is nothing to restore. */
 export function withoutMerge(sheet: SheetDto, range: string): SheetDto {
     const merges = (sheet.merges ?? []).filter(existing => existing !== range);
 
@@ -878,7 +878,7 @@ export function autoFilterOf(sheet: SheetDto): string | null {
  * click without a drag would otherwise write `A1:A1` into the document, and a
  * filter over one cell is not a thing an author meant to ask for.
  *
- * The TOP row of the range is its header — that is Excel's rule, not ours, and
+ * The TOP row of the range is its header -- that is Excel's rule, not ours, and
  * it is why a range must be given with the header included. A filter declared
  * over the body alone puts dropdowns on the first line of data.
  */
@@ -897,7 +897,7 @@ export function withoutAutoFilter(sheet: SheetDto): SheetDto {
     return next;
 }
 
-/** True when `ref` is one of the filter's HEADER cells — the ones that get a button. */
+/** True when `ref` is one of the filter's HEADER cells -- the ones that get a button. */
 export function isFilterHeader(sheet: SheetDto, ref: string): boolean {
     const range = autoFilterOf(sheet);
     const box = range ? parseRange(range) : null;
@@ -923,7 +923,7 @@ export function filterColumns(range: string): string[] {
  * The rows a filter's dropdowns act on: everything under the header.
  *
  * Empty when the range is one row tall, which is a filter whose table has no
- * body yet — the ordinary state of a template before a `{loop:}` band expands.
+ * body yet -- the ordinary state of a template before a `{loop:}` band expands.
  */
 export function filterBodyRows(range: string): number[] {
     const box = parseRange(range);
@@ -939,7 +939,7 @@ export function filterBodyRows(range: string): number[] {
 //
 // ## The arithmetic mirrors the backend's `RowExpansionMap`, deliberately
 //
-// A `{loop:}` expansion and an inserted row are the same question — where does
+// A `{loop:}` expansion and an inserted row are the same question -- where does
 // everything below end up, and what does that do to the references pointing at
 // it. The backend keeps those rules in one class precisely so its two carriers
 // cannot drift; this is the third carrier, and it follows the same rules for
@@ -947,7 +947,7 @@ export function filterBodyRows(range: string): number[] {
 //
 // ## Where this DIFFERS from a loop expansion, and why it is simpler
 //
-// An expansion asks a range's two ends different questions — a start pins the
+// An expansion asks a range's two ends different questions -- a start pins the
 // table, an end grows with it. An insert does not: every reference at or below
 // the line moves by exactly one, both ends alike. So each A1 reference is
 // shifted independently and there is no start/end asymmetry to get wrong.
@@ -958,7 +958,7 @@ export function filterBodyRows(range: string): number[] {
 // and so does this. Shifting such a reference to whatever moved INTO that row
 // would be silently wrong: the formula would keep computing, on the wrong cell.
 
-/** What a reference to something deleted becomes — Excel's own answer. */
+/** What a reference to something deleted becomes -- Excel's own answer. */
 /** The marker that pins part of a reference against a move. */
 const ABSOLUTE = '$';
 
@@ -971,7 +971,7 @@ export const REF_ERROR = '#REF!';
  * same for its own reason. Here the reason is delete: matching only single
  * refs treats `SUM(B2:B3)` as two independent references, so deleting row 2
  * turns the START into `#REF!` and yields `SUM(#REF!:B2)`. Excel SHRINKS such
- * a range — `SUM(B2:B2)` — and reserves `#REF!` for a range deleted entirely.
+ * a range -- `SUM(B2:B2)` -- and reserves `#REF!` for a range deleted entirely.
  *
  * The trailing lookahead keeps `LOG10(` from reading as column LOG, row 10.
  */
@@ -1031,8 +1031,8 @@ function axisIndex(ref: string, axis: 'row' | 'column'): number | null {
  * A range INSIDE a formula, whose ends follow the range rules rather than the
  * single-reference ones.
  *
- * On delete a start sitting ON the deleted line stays put — whatever moved up
- * into that line is now the range's first member — while the end shrinks. Only
+ * On delete a start sitting ON the deleted line stays put -- whatever moved up
+ * into that line is now the range's first member -- while the end shrinks. Only
  * when the end falls BELOW the start has the whole range gone, and that is the
  * one case Excel answers `#REF!` for.
  */
@@ -1106,7 +1106,7 @@ function shiftSheet(sheet: SheetDto, axis: 'row' | 'column', at: number, delta: 
     const cells: Record<string, SheetCellDto> = {};
     for (const [ref, cell] of Object.entries(sheet.cells)) {
         const moved = shiftRef(ref, axis, at, delta);
-        // The cell itself was on the deleted line — it goes with it.
+        // The cell itself was on the deleted line -- it goes with it.
         if (null === moved) continue;
         cells[moved] = undefined === cell.formula
             ? cell
@@ -1552,7 +1552,7 @@ export function validationAt(sheet: SheetDto, ref: string): SheetValidationDto |
 /**
  * The options a rule offers, or empty when it is not a list-shaped one.
  *
- * A checkbox's options are its TYPE and are never read from the document —
+ * A checkbox's options are its TYPE and are never read from the document --
  * {@link CHECKBOX_VALUES} says why.
  */
 export function validationOptions(rule: SheetValidationDto): string[] {
@@ -1561,7 +1561,7 @@ export function validationOptions(rule: SheetValidationDto): string[] {
     return rule.type === 'list' ? [...(rule.values ?? [])] : [];
 }
 
-/** Whether a rule draws as a control in the grid — the two list-shaped types. */
+/** Whether a rule draws as a control in the grid -- the two list-shaped types. */
 export function isControl(rule: SheetValidationDto): boolean {
     return rule.type === 'list' || rule.type === 'checkbox';
 }
@@ -1575,7 +1575,7 @@ export function isControl(rule: SheetValidationDto): boolean {
  * author sees the rule they just made, which is the one they were thinking
  * about.
  *
- * A `list` with no options is refused — that is not a dropdown, it is a cell
+ * A `list` with no options is refused -- that is not a dropdown, it is a cell
  * nobody can type into, and the backend refuses the same shape.
  */
 export function withValidation(sheet: SheetDto, range: string, rule: SheetValidationDto): SheetDto {
@@ -1614,7 +1614,7 @@ export function withoutValidation(sheet: SheetDto, range: string): SheetDto {
  * The unit is OOXML's, not pixels: a column's width is measured in CHARACTERS
  * of the workbook's default font. It is stored exactly as the backend's
  * `SheetDocumentWriter` passes it to `setWidth()`, so nothing here converts on
- * the way in or out — see {@link columnWidthToPx} for the display side.
+ * the way in or out -- see {@link columnWidthToPx} for the display side.
  */
 export function columnWidthOf(sheet: SheetDto, column: string): number | undefined {
     return sheet.columnWidths?.[column.toUpperCase()];
@@ -1624,7 +1624,7 @@ export function columnWidthOf(sheet: SheetDto, column: string): number | undefin
  * Set or clear a column's width, keeping the document sparse.
  *
  * `undefined` clears, and clearing the LAST width drops the `columnWidths` key
- * entirely rather than leaving `{}` behind — the backend writes the object only
+ * entirely rather than leaving `{}` behind -- the backend writes the object only
  * when it has entries, and a `.dsheet` is a source file an author may read.
  *
  * A non-finite or non-positive width is refused rather than stored: Excel reads
@@ -1657,7 +1657,7 @@ export function withColumnWidth(sheet: SheetDto, column: string, width: number |
  * author set.
  *
  * Excel's own conversion is `px = round(width * maxDigitWidth) + padding`, where
- * `maxDigitWidth` depends on the workbook font — 7px for the 11pt Calibri that
+ * `maxDigitWidth` depends on the workbook font -- 7px for the 11pt Calibri that
  * is the usual default, with 5px of cell padding. Both are reproduced here as
  * named constants rather than a magic `w * 7 + 5`.
  *
@@ -1674,14 +1674,14 @@ export function columnWidthToPx(width: number): number {
 
 /**
  * The floor a drag may reach. Excel reads a width of 0 as a HIDDEN column, so a
- * drag that ran to the left edge would not make a thin column — it would make
+ * drag that ran to the left edge would not make a thin column -- it would make
  * one that does not appear in the generated workbook at all, with nothing on
  * screen to say so.
  */
 export const MIN_COLUMN_WIDTH = 0.5;
 
 /**
- * Pixels back to a stored character width — the inverse of
+ * Pixels back to a stored character width -- the inverse of
  * {@link columnWidthToPx}, for the drag-resize handle on the column headers.
  *
  * Rounded to two decimals because the drag produces a new value on every
@@ -1700,7 +1700,7 @@ export function columnWidthFromPx(px: number): number {
  * Parse `.dsheet` bytes, falling back to an empty document.
  *
  * A file the editor cannot understand must NOT be silently replaced with a
- * blank one — the caller is told, and decides. Returning the fallback plus a
+ * blank one -- the caller is told, and decides. Returning the fallback plus a
  * flag rather than throwing keeps the dialog openable on a damaged file, which
  * is the only state from which an operator can repair it.
  */
@@ -1723,9 +1723,9 @@ export function parseSheetDocument(content: string): { doc: SheetDocumentDto; ok
 
         // `sheets` is a map keyed by name and can arrive as an ARRAY for the same
         // reason `cells` could: PHP coerces numeric string keys, so a file whose
-        // sheets were named "0" and "1" encoded as `"sheets": [ … ]`. `Object.keys`
+        // sheets were named "0" and "1" encoded as `"sheets": [ ... ]`. `Object.keys`
         // still yields "0"/"1" so the tabs LOOK right, but adding a sheet then sets
-        // a string key on an array and `JSON.stringify` drops it on save — the
+        // a string key on an array and `JSON.stringify` drops it on save -- the
  // The same loss again, one level up. Rebuild it as a plain object, which keeps
         // the positional names rather than discarding them.
         if (Array.isArray(doc.sheets)) {
@@ -1737,17 +1737,17 @@ export function parseSheetDocument(content: string): { doc: SheetDocumentDto; ok
 
         for (const sheet of Object.values(doc.sheets)) {
             // `cells` must be a plain OBJECT, and `??=` is not enough to make it
-            // one. A template minted by the backend carried `"cells": []` — PHP
-            // cannot distinguish an empty map from an empty list — and `[]` is
+            // one. A template minted by the backend carried `"cells": []` -- PHP
+            // cannot distinguish an empty map from an empty list -- and `[]` is
             // neither null nor undefined, so the old `??=` left it as a JS ARRAY.
-            // `cells['A1'] = …` then sets a STRING KEY on an array, which
+            // `cells['A1'] = ...` then sets a STRING KEY on an array, which
             // `JSON.stringify` DISCARDS: every cell typed into a brand-new
             // native template was silently lost on save, behind a green "Saved"
             // toast, with the stored blob coming back byte-identical.
             //
             // Normalising on READ is what fixes the templates already on disk;
             // the backend now emits `{}` so new ones never carry the array.
-            // Nothing is lost by discarding an array here — a JSON array cannot
+            // Nothing is lost by discarding an array here -- a JSON array cannot
             // hold the A1 keys this format is made of.
             if (typeof sheet.cells !== 'object' || sheet.cells === null || Array.isArray(sheet.cells)) {
                 sheet.cells = {};
@@ -1761,7 +1761,7 @@ export function parseSheetDocument(content: string): { doc: SheetDocumentDto; ok
     }
 }
 
-/** Serialise for the VFS write — indented, because a `.dsheet` is a SOURCE file. */
+/** Serialise for the VFS write -- indented, because a `.dsheet` is a SOURCE file. */
 export function serialiseSheetDocument(doc: SheetDocumentDto): string {
     return JSON.stringify(doc, null, 4);
 }

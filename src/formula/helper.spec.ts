@@ -1,7 +1,7 @@
 /**
  * The formula helper's state, as a function of a string and a caret.
  *
- * `|` marks the caret in every case below, which keeps the offsets readable —
+ * `|` marks the caret in every case below, which keeps the offsets readable --
  * an assertion written as `helperAt('=SUM(A1, ', 9)` is a puzzle, and a wrong
  * number in one looks exactly like a bug in the code.
  */
@@ -144,7 +144,7 @@ describe('signature parts, for highlighting the current argument', () => {
     });
 
     it('repeats the last argument of a variadic function', () => {
-        // SUM(number1, [number2, …]) describes the fifth argument with its
+        // SUM(number1, [number2, ...]) describes the fifth argument with its
         // second part rather than running off the end.
         const sum = lookupFunction('SUM')!;
         expect(argumentLabel(sum, 0)).toBe('number1');
