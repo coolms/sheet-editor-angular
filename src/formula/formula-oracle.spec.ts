@@ -9,7 +9,7 @@ import type { SheetCellDto, SheetDocumentDto } from '../sheet-document.model';
  * ##  Why an oracle and not more hand-written expectations
  *
  * `formula.spec.ts` says what this engine should do, and it was written by the
- * same hand that wrote the engine — so the two share their assumptions, and a
+ * same hand that wrote the engine -- so the two share their assumptions, and a
  * function that is confidently wrong is confidently asserted. The header of
  * `functions.ts` names the stake: a formula is written through to the `.xlsx`
  * VERBATIM, so "anything computed differently here would be a preview that
@@ -111,8 +111,8 @@ describe('the formula engine against LibreOffice', () => {
      * written through to the `.xlsx` verbatim, and Excel is what opens it.
      *
      * Such a case cannot BE an oracle case, because the oracle is wrong. Each
-     * is listed in `DIVERGENCES` in `tools/formula-oracle-fixture.py` — which
-     * prints what it excluded, so the exclusion is visible rather than silent —
+     * is listed in `DIVERGENCES` in `tools/formula-oracle-fixture.py` -- which
+     * prints what it excluded, so the exclusion is visible rather than silent --
      * and asserted here, where the reason can be written down.
      */
     describe('follows Excel rather than LibreOffice', () => {

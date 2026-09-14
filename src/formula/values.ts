@@ -6,7 +6,7 @@
  * **`unresolved` is not an error.** This grid edits a TEMPLATE: a cell may hold
  * a DTMPL token like `{var:order.total}`, whose value is not known until the
  * backend fills the document. A formula reaching such a cell has no answer yet
- * — and answering `0` would be a lie, while answering `#VALUE!` would report a
+ * -- and answering `0` would be a lie, while answering `#VALUE!` would report a
  * mistake the author has not made. So it propagates as its own outcome, and the
  * grid can say "depends on the data" rather than showing a number nobody should
  * trust.
@@ -122,7 +122,7 @@ export function toText(v: CellValue): string {
 /**
  * Truthiness for `IF`, `AND`, `OR`.
  *
- * A number is true when non-zero; text is NOT coerced, because `IF("yes", …)`
+ * A number is true when non-zero; text is NOT coerced, because `IF("yes", ...)`
  * is a mistake worth reporting rather than a convention worth guessing at.
  */
 export function toBoolean(v: CellValue): { ok: true; value: boolean } | { ok: false; value: CellValue } {
@@ -148,13 +148,13 @@ export function toBoolean(v: CellValue): { ok: true; value: boolean } | { ok: fa
 /**
  * Comparison, with a spreadsheet's ordering rather than JavaScript's.
  *
- * Text compares case-INSENSITIVELY, so `"a" = "A"` is true — which is what a
+ * Text compares case-INSENSITIVELY, so `"a" = "A"` is true -- which is what a
  * spreadsheet says and what `===` does not. A number never equals text; they
  * order as number < text < boolean instead of coercing, so `1 < "a"` is true
  * without `"a"` becoming `NaN`.
  *
  * Lives HERE, beside the coercions, because two callers need it: the `=` and
- * `<` operators, and the criterion in `SUMIF`/`COUNTIF` — which is a
+ * `<` operators, and the criterion in `SUMIF`/`COUNTIF` -- which is a
  * comparison spelled as text. A second implementation of the same ordering is
  * a disagreement waiting to happen, and the one that would drift is the one
  * nobody reads.

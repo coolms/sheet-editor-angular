@@ -1,7 +1,7 @@
 /**
  * Finding and replacing, pinned against what a TEMPLATE needs.
  *
- * The job this exists for is renaming a `{var:…}` token across a document, so
+ * The job this exists for is renaming a `{var:...}` token across a document, so
  * the cases that earn their place are the ones where searching computed values
  * would answer differently: a token has no value, and a formula's text is not
  * its result.

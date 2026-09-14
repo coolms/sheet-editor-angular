@@ -1,7 +1,7 @@
 /**
  * A rectangle of cells as clipboard text, and back.
  *
- * Tab-separated, newline between rows — which is not a house format but the one
+ * Tab-separated, newline between rows -- which is not a house format but the one
  * Excel, Google Sheets, Numbers and every database console already speak. It is
  * what makes a copy out of this grid paste into a spreadsheet, and a copy out of
  * a spreadsheet paste into this grid, without either end knowing about the
@@ -50,7 +50,7 @@ export function toClipboardText(sheet: SheetDto, range: string): string {
  * Clipboard text as a rectangle.
  *
  * Quoted cells may contain the very characters the format separates on, so this
- * cannot be `split('\n').map(split('\t'))` — a single-cell paste of a note with
+ * cannot be `split('\n').map(split('\t'))` -- a single-cell paste of a note with
  * a line break in it would arrive as two rows. Scanned character by character
  * instead, which is the only way to know whether a newline is data.
  *

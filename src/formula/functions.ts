@@ -3,8 +3,8 @@
  * themselves.
  *
  * Every entry carries a `signature`, a `summary` and a `category` because the
- * two surfaces that show functions — the helper popup that appears as you type
- * `=SUM(`, and the browsable list behind the toolbar's Σ — both read THIS.
+ * two surfaces that show functions -- the helper popup that appears as you type
+ * `=SUM(`, and the browsable list behind the toolbar's Σ -- both read THIS.
  * Putting the description here rather than in either popup means there is ONE
  * list: a function cannot exist without being describable, and neither surface
  * can offer one that does not exist.
@@ -55,7 +55,7 @@ export interface FunctionContext {
      * Every value, in ROWS.
      *
      * `spread` flattens, which is all `SUM` ever needed. `VLOOKUP` and `INDEX`
-     * are about POSITION — "the third column of this block" — and a flat list
+     * are about POSITION -- "the third column of this block" -- and a flat list
      * cannot answer that: twelve values are a 3x4 block or a 4x3 one, and the
      * difference is the answer.
      */
@@ -67,14 +67,14 @@ export interface FormulaFunction {
     readonly category: FunctionCategory;
     readonly minArgs: number;
     readonly maxArgs: number;
-    /** Shown in the helper, e.g. `SUM(number1, [number2, …])`. */
+    /** Shown in the helper, e.g. `SUM(number1, [number2, ...])`. */
     readonly signature: string;
     /** One sentence, shown under the signature. */
     readonly summary: string;
     call(args: readonly FormulaNode[], ctx: FunctionContext): CellValue;
 }
 
-/** An entry before it is shelved — see {@link inCategory}. */
+/** An entry before it is shelved -- see {@link inCategory}. */
 type FunctionSpec = Omit<FormulaFunction, 'category'>;
 
 /**
@@ -101,7 +101,7 @@ function collect(args: readonly FormulaNode[], ctx: FunctionContext): CellValue[
     return out;
 }
 
-/** The numbers among some values — text and blanks ignored, as `SUM` does. */
+/** The numbers among some values -- text and blanks ignored, as `SUM` does. */
 function numbersOf(values: readonly CellValue[]): number[] | CellValue {
     const out: number[] = [];
     for (const v of values) {
@@ -263,7 +263,7 @@ const CRITERION = /^(<=|>=|<>|<|>|=)?([\s\S]*)$/u;
 const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
 
 /**
- * `*` matches any run, `?` exactly one, `~` escapes either — as a spreadsheet
+ * `*` matches any run, `?` exactly one, `~` escapes either -- as a spreadsheet
  * spells it. Case-insensitive, because every other text comparison here is.
  */
 function wildcardPattern(source: string): RegExp {
@@ -287,8 +287,8 @@ function wildcardPattern(source: string): RegExp {
 /**
  * A `SUMIF`/`COUNTIF` criterion, as the test it stands for.
  *
- * The criterion is a comparison SPELLED AS TEXT — `">10"` is not the text
- * `">10"`, it is "greater than ten" — which is the one thing about these
+ * The criterion is a comparison SPELLED AS TEXT -- `">10"` is not the text
+ * `">10"`, it is "greater than ten" -- which is the one thing about these
  * functions everybody gets wrong the first time. The ordering it compares with
  * is `compareValues`, the same one `>` uses, so a criterion and an operator can
  * never disagree about what is bigger.
@@ -321,7 +321,7 @@ function matcherFor(criterion: CellValue): (candidate: CellValue) => boolean {
  *
  * Deliberately not {@link matcherFor}: a lookup key is a value, not a
  * criterion, so a key that happens to begin `<` is that text and not a
- * comparison. Wildcards still apply, because `MATCH("wid*", …)` is an idiom.
+ * comparison. Wildcards still apply, because `MATCH("wid*", ...)` is an idiom.
  */
 function looksUp(key: CellValue): (candidate: CellValue) => boolean {
     if (key.kind === 'text' && /[*?]/u.test(key.value)) {
@@ -338,7 +338,7 @@ function looksUp(key: CellValue): (candidate: CellValue) => boolean {
  *
  * `type` 0 is an exact match. 1 wants the vector ASCENDING and answers with the
  * last value not greater than the key; -1 wants it descending. Both give a
- * wrong answer on unsorted data rather than an error — which is what every
+ * wrong answer on unsorted data rather than an error -- which is what every
  * spreadsheet does, and this engine has to agree with the workbook the formula
  * is written into.
  */
@@ -429,7 +429,7 @@ function dateArg(
     return serialToDate(n.value) ?? err('#NUM!');
 }
 
-/** `YEAR`, `MONTH`, `DAY` — one reading of a date, three times over. */
+/** `YEAR`, `MONTH`, `DAY` -- one reading of a date, three times over. */
 function datePart(name: string, summary: string, read: (d: DateParts) => number): FunctionSpec {
     return {
         name,

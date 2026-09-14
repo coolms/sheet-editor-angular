@@ -291,7 +291,7 @@ function describe(token: Token): string {
 }
 
 /**
- * Parse a formula WITHOUT its leading `=` — which is how the document stores
+ * Parse a formula WITHOUT its leading `=` -- which is how the document stores
  * one, so callers never strip it twice or forget to.
  */
 export function parseFormula(source: string): ParseResult {

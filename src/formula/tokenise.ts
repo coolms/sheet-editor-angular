@@ -3,7 +3,7 @@
  *
  * Kept separate from the parser because the FORMULA HELPER needs it too: the
  * popup that offers a function signature has to know what the caret is sitting
- * inside — a function name, an argument, a half-typed reference — and that is a
+ * inside -- a function name, an argument, a half-typed reference -- and that is a
  * question about tokens, not about a finished parse tree. A formula being typed
  * is usually not parseable yet; it is always tokenisable.
  */
@@ -27,11 +27,11 @@ export interface Token {
 const OPERATORS = ['<>', '<=', '>=', '+', '-', '*', '/', '^', '&', '=', '<', '>', '%'];
 
 /**
- * `A1`, `$A$1`, `AA100` — the `$` is accepted and dropped, since this engine
+ * `A1`, `$A$1`, `AA100` -- the `$` is accepted and dropped, since this engine
  * does not move formulas, so absolute and relative mean the same thing here.
  *
  *  The lookahead excludes `(` as well as word characters, so a NAME that
- * happens to look like a reference — `LOG10(` is the standing example — is a
+ * happens to look like a reference -- `LOG10(` is the standing example -- is a
  * call and not column LOG row 10. The backend's `RowExpansionMap::REFERENCE`
  * has carried that guard from the start and this had not; no function with
  * digits in its name is registered yet, so nothing was broken, which is
@@ -164,6 +164,6 @@ export function tokenise(input: string): Token[] {
     return out;
 }
 
-/** Tokens with whitespace removed — what the parser consumes. */
+/** Tokens with whitespace removed -- what the parser consumes. */
 export const significant = (tokens: readonly Token[]): Token[] =>
     tokens.filter((t) => t.kind !== 'whitespace');

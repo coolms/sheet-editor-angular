@@ -130,7 +130,7 @@ describe('sheet document model', () => {
 
         /**
          * THE one that matters. The number format is the author's TYPE
-         * DECLARATION — `@` is what keeps an order number like `00412`
+         * DECLARATION -- `@` is what keeps an order number like `00412`
          * text instead of arithmetic. Editing the cell's TEXT must not discard
          * it, or the next generation silently promotes the value.
          */
@@ -148,7 +148,7 @@ describe('sheet document model', () => {
             expect(inputToCell('', { value: 'gone' })).toBeNull();
         });
 
-        /** …unless it still carries formatting the author set deliberately. */
+        /** ...unless it still carries formatting the author set deliberately. */
         it('keeps an emptied cell that carries formatting', () => {
             expect(inputToCell('', { value: 'gone', numberFormat: '@' })).toEqual({ numberFormat: '@' });
         });
@@ -239,7 +239,7 @@ describe('sheet document model', () => {
         });
 
         /**
-         * Wrap and vertical alignment — the pair that makes a tall row
+         * Wrap and vertical alignment -- the pair that makes a tall row
          * usable. Wrap is a boolean like bold, so it CLEARS to absent rather
          * than storing false: `wrapText` has a real default in OOXML and a
          * stored `false` would be a third state meaning the same as absent.
@@ -266,7 +266,7 @@ describe('sheet document model', () => {
 
         /**
          * The two are independent: a cell may wrap without stating where its
-         * text sits, and may state that without wrapping — a hand-set row
+         * text sits, and may state that without wrapping -- a hand-set row
          * height creates the same spare space wrapping does.
          */
         it('keeps wrap and valign independent of each other', () => {
@@ -300,7 +300,7 @@ describe('sheet document model', () => {
         /**
          * A damaged file must REPORT itself rather than open as blank. Opening
          * blank and then saving would overwrite the operator's file with an
-         * empty one — the editor is the only place they can repair it from.
+         * empty one -- the editor is the only place they can repair it from.
          */
         it('reports a file it cannot understand instead of pretending it is empty', () => {
             for (const bad of ['not json at all', '[]', '{"sheets":null}', '{"sheets":{}}']) {
@@ -330,16 +330,16 @@ describe('sheet document model', () => {
      * THE data-loss bug, found by reading the stored bytes rather than trusting
      * a green "Saved" toast.
      *
-     * A template minted by the backend carried `"cells": []` — PHP cannot tell
+     * A template minted by the backend carried `"cells": []` -- PHP cannot tell
      * an empty map from an empty list, so `json_encode` emitted an array. `[]`
      * is neither null nor undefined, so the parser's `??=` left it alone, and
-     * `cells['A1'] = …` then set a STRING KEY on a JS array. `JSON.stringify`
+     * `cells['A1'] = ...` then set a STRING KEY on a JS array. `JSON.stringify`
      * discards those: every cell typed into a brand-new native template was lost
      * on save, and the stored blob came back with the SAME CONTENT HASH.
      *
      * The assertion is on the SERIALISED form on purpose. Checking
-     * `doc.sheets.S.cells['A1']` passes even on an array — the property is
-     * really there in memory — so a test written that way would have gone green
+     * `doc.sheets.S.cells['A1']` passes even on an array -- the property is
+     * really there in memory -- so a test written that way would have gone green
      * against the bug. Only stringifying reproduces the loss.
      */
     describe('a minted document whose cells arrived as a JSON array', () => {
@@ -368,8 +368,8 @@ describe('sheet document model', () => {
      *
      * Sheet names are operator-supplied and the rename validator accepts "0" and
      * "1". PHP coerces numeric string array keys to ints, so a document whose
-     * sheets were named that way became a LIST and encoded as `"sheets": [ … ]`
-     * — the names gone from the file entirely. `Object.keys` still yields
+     * sheets were named that way became a LIST and encoded as `"sheets": [ ... ]`
+     * -- the names gone from the file entirely. `Object.keys` still yields
      * "0"/"1", so the tabs LOOK correct; adding a sheet then sets a string key
      * on a JS array and `JSON.stringify` drops it, exactly as with `cells`.
      *
@@ -390,14 +390,14 @@ describe('sheet document model', () => {
 
         /**
          * Re-saving is what REPAIRS the file. Without the normalisation the
-         * editor writes `"sheets": [ … ]` straight back out and the names never
+         * editor writes `"sheets": [ ... ]` straight back out and the names never
          * become real, so a document stays in the broken shape however many
          * times it is opened.
          *
          * Note what is NOT asserted here: that adding a sheet survives. It does
          * either way, because `withNewSheet` SPREADS into a fresh object rather
          * than assigning into the array. That is a property of today's helper,
-         * not a guarantee — which is the whole reason to normalise on read.
+         * not a guarantee -- which is the whole reason to normalise on read.
          */
         it('writes the sheets back out as an object, repairing the file', () => {
             const serialised = serialiseSheetDocument(parseSheetDocument(POSITIONAL).doc);
@@ -434,7 +434,7 @@ describe('sheet document model', () => {
         /**
          * THE ordering trap. JS object keys iterate in insertion order, the
          * backend writes sheets in that order, and `SheetDocumentWriter` makes
-         * index 0 the ACTIVE sheet — so a rename implemented as delete-then-add
+         * index 0 the ACTIVE sheet -- so a rename implemented as delete-then-add
          * would move the sheet to the end of the workbook, and renaming the
          * first one would hand the operator a different opening tab.
          */
@@ -498,8 +498,8 @@ describe('sheet document model', () => {
 
         /**
          * Clearing the covered cells is deliberate. A merged range keeps only
-         * its top-left value — that is what the renderer does, because
-         * PhpSpreadsheet's `mergeCells()` empties the rest — so a document
+         * its top-left value -- that is what the renderer does, because
+         * PhpSpreadsheet's `mergeCells()` empties the rest -- so a document
          * holding values under a merge would render differently from what the
  * grid shows. That divergence is what existed to close.
          */
@@ -598,7 +598,7 @@ describe('sheet document model', () => {
         });
 
         /**
-         * Display only, and approximate on purpose — the editor renders in the
+         * Display only, and approximate on purpose -- the editor renders in the
          * browser's font, not the workbook's. What must be exact is the STORED
          * number, which is why nothing converts on save.
          */
@@ -619,7 +619,7 @@ describe('sheet document model', () => {
 
         /**
          * A drag produces a new value on every mousemove, and the raw division
-         * yields things like 12.714285714285714 — which would be written into
+         * yields things like 12.714285714285714 -- which would be written into
          * the document and shown in the toolbar's width box. An author must end
          * up with a number they could have typed.
          */
@@ -629,7 +629,7 @@ describe('sheet document model', () => {
 
         /**
          * Dragging past the left edge must not produce a HIDDEN column. Width 0
-         * is Excel's "hidden", and `withColumnWidth` refuses it — so without the
+         * is Excel's "hidden", and `withColumnWidth` refuses it -- so without the
          * clamp the drag would silently stop having any effect at the exact
          * moment the author is trying hardest to make the column narrow.
          */
@@ -647,7 +647,7 @@ describe('sheet document model', () => {
          * The editor and the backend must agree on ONE spelling. A browser
          * colour input emits lower case; `SheetCell::colour()` produces upper.
          * Without this the editor writes `#ffee00` into a file the backend
-         * would rewrite as `#FFEE00` — a case-only diff on a line nobody
+         * would rewrite as `#FFEE00` -- a case-only diff on a line nobody
          * touched.
          */
         it('stores a colour in the same canonical form the backend parses to', () => {
@@ -657,7 +657,7 @@ describe('sheet document model', () => {
             }
         });
 
-        /** Only colours are folded — a font family is a NAME and case is part of it. */
+        /** Only colours are folded -- a font family is a NAME and case is part of it. */
         it('leaves non-colour styles exactly as given', () => {
             expect(withStyle({}, 'fontFamily', 'Times New Roman')?.fontFamily).toBe('Times New Roman');
             expect(withStyle({}, 'align', 'center')?.align).toBe('center');
@@ -672,7 +672,7 @@ describe('sheet document model', () => {
     describe('rangeContains', () => {
         /**
          * The fast path the grid uses for every rendered cell. It must agree
-         * with the list version exactly — if the two ever disagree, the cheap
+         * with the list version exactly -- if the two ever disagree, the cheap
          * one is the one on screen.
          */
         it('agrees with refsInRange across a box', () => {
@@ -730,7 +730,7 @@ describe('sheet document model', () => {
         });
 
         /**
-         * The dropdowns sit on the range's TOP row — Excel's rule, and the
+         * The dropdowns sit on the range's TOP row -- Excel's rule, and the
          * reason a filter must be declared with its header included.
          */
         it('puts the buttons on the top row of the range only', () => {
@@ -820,7 +820,7 @@ describe('sheet document model', () => {
         /**
          * Excel answers `#REF!` for a formula pointing at a row that is gone,
          * and so does this. Shifting the reference to whatever moved INTO that
-         * row would be silently wrong — the formula would keep computing, on
+         * row would be silently wrong -- the formula would keep computing, on
          * the wrong cell.
          */
         it('turns a reference to a deleted row into #REF!', () => {
@@ -865,7 +865,7 @@ describe('sheet document model', () => {
             expect(withDeletedRow(TABLE, -1)).toBe(TABLE);
         });
 
-        /** Contents only — an author clearing cells has not asked to dismantle the table. */
+        /** Contents only -- an author clearing cells has not asked to dismantle the table. */
         it('clears contents without touching the layout', () => {
             const next = withClearedRange(TABLE, 'A2:B3');
 
@@ -931,7 +931,7 @@ describe('sheet document model', () => {
         /**
          * `outer` rules the OUTSIDE of the selection, not every cell in it.
          * That is what an author means by "box this table", and getting it
-         * backwards is the kind of thing nobody reports — they just stop using
+         * backwards is the kind of thing nobody reports -- they just stop using
          * the control.
          */
         it('boxes a range without ruling the cells inside it', () => {
@@ -950,7 +950,7 @@ describe('sheet document model', () => {
             expect(next.cells['C2'].borders).toEqual({ top: 'thin', right: 'thin', bottom: 'thin', left: 'thin' });
         });
 
-        /** One side means the side of the SELECTION — underline the table, not each row. */
+        /** One side means the side of the SELECTION -- underline the table, not each row. */
         it('rules one side of the selection only', () => {
             const next = withBorderPreset(RANGE, 'B2:B4', 'bottom');
 
@@ -1006,7 +1006,7 @@ describe('sheet document model', () => {
      * ONE line and the browser picks a winner: at equal width and style, the
      * cell further up or further left. Every cell carries a grey gridline, so a
      * black `top` lost to the grey `bottom` above it and a black `left` lost to
-     * the grey `right` beside it — "All borders" on a single cell drew its
+     * the grey `right` beside it -- "All borders" on a single cell drew its
      * right and bottom ONLY, which is exactly what was reported.
      */
     describe('rendered borders', () => {
@@ -1060,8 +1060,8 @@ describe('sheet document model', () => {
 
     /**
      * The control has to show what the cells ARE. A cell with every edge ruled
-     * whose control still reads "Borders…" tells the author their gesture did
-     * not land — which is how this was reported.
+     * whose control still reads "Borders..." tells the author their gesture did
+     * not land -- which is how this was reported.
      */
     describe('reading borders back', () => {
         const SHEET: SheetDto = { cells: { B2: { value: 'x' } } };
@@ -1148,7 +1148,7 @@ describe('sheet document model', () => {
 
         /**
          * A single cell is a legal key here where it is not for a merge or a
-         * filter — "this one cell is a dropdown" is the ordinary case — so the
+         * filter -- "this one cell is a dropdown" is the ordinary case -- so the
          * lookup has to widen it rather than fail to parse it.
          */
         it('treats a single-cell key as a range of one', () => {
@@ -1168,7 +1168,7 @@ describe('sheet document model', () => {
         /**
          * Two rules over one cell is a state whose behaviour depends on which
          * the reader applies, and Excel keeps only one. The author sees the rule
-         * they just made — the one they were thinking about.
+         * they just made -- the one they were thinking about.
          */
         it('replaces a rule the new range overlaps', () => {
             const sheet: SheetDto = {

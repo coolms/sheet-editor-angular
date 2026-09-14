@@ -11,7 +11,7 @@ import { dateToSerial } from './number-format';
  * The grid surface for a native `.dsheet`.
  *
  * Rendered through TestBed rather than asserted on the model alone: the model
- * has its own spec, and what can go wrong HERE is the wiring — a grid that does
+ * has its own spec, and what can go wrong HERE is the wiring -- a grid that does
  * not reach the cells the document defines, an edit that does not reach the
  * document, or a save that writes something the backend cannot read.
  */
@@ -39,7 +39,7 @@ describe('SheetEditorDialogComponent', () => {
     /**
      * Found by LABEL, never by index. An earlier version of this spec used
      * `querySelectorAll('button')[2]`, and adding one toolbar button silently
-     * turned every "click save" into "click cancel" — which a test asserting
+     * turned every "click save" into "click cancel" -- which a test asserting
      * that nothing was sent would have passed. Position is not identity.
      */
     function saveButton(fixture: ReturnType<typeof makeFixture>): HTMLButtonElement {
@@ -62,7 +62,7 @@ describe('SheetEditorDialogComponent', () => {
         return td?.classList.contains('sheet-editor__cell--in-range') ?? false;
     }
 
-    /** As {@link saveButton} — by label, never by index. */
+    /** As {@link saveButton} -- by label, never by index. */
     function mergeButton(fixture: ReturnType<typeof makeFixture>): HTMLButtonElement {
         const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
         const merge = buttons.find(b => (b.textContent ?? '').trim().startsWith('Merge')
@@ -83,7 +83,7 @@ describe('SheetEditorDialogComponent', () => {
      *
      * An earlier version of this helper also dispatched `focus`, which no real
      * shift-click produces. It passed while the feature did not work in the
-     * admin at all — caught by clicking through it in a browser, not here. The
+     * admin at all -- caught by clicking through it in a browser, not here. The
      * `defaultPrevented` assertion is what keeps this honest: if the component
      * stops cancelling, the real gesture silently reverts to selecting text.
      */
@@ -205,7 +205,7 @@ describe('SheetEditorDialogComponent', () => {
             const input = cellInput(fixture, 'A1')!;
             // REAL focus, not a synthetic event. Caret tracking refuses an
             // input while another field holds the focus, and a synthetic focus
-            // event leaves the document's active element on the body — which
+            // event leaves the document's active element on the body -- which
             // is how these specs missed the point-mode defect entirely.
             input.focus();
             input.value = '=SU';
@@ -234,7 +234,7 @@ describe('SheetEditorDialogComponent', () => {
             const input = cellInput(fixture, 'A1')!;
             // REAL focus, not a synthetic event. Caret tracking refuses an
             // input while another field holds the focus, and a synthetic focus
-            // event leaves the document's active element on the body — which
+            // event leaves the document's active element on the body -- which
             // is how these specs missed the point-mode defect entirely.
             input.focus();
             input.value = '=ROUND(A1, ';
@@ -256,7 +256,7 @@ describe('SheetEditorDialogComponent', () => {
             const input = cellInput(fixture, 'A1')!;
             // REAL focus, not a synthetic event. Caret tracking refuses an
             // input while another field holds the focus, and a synthetic focus
-            // event leaves the document's active element on the body — which
+            // event leaves the document's active element on the body -- which
             // is how these specs missed the point-mode defect entirely.
             input.focus();
             input.value = '=SU';
@@ -283,7 +283,7 @@ describe('SheetEditorDialogComponent', () => {
             const input = cellInput(fixture, 'A1')!;
             // REAL focus, not a synthetic event. Caret tracking refuses an
             // input while another field holds the focus, and a synthetic focus
-            // event leaves the document's active element on the body — which
+            // event leaves the document's active element on the body -- which
             // is how these specs missed the point-mode defect entirely.
             input.focus();
             input.value = 'SUM';
@@ -332,7 +332,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
  * The rule, at the surface an operator touches. `@` declares the cell
-     * text rather than arithmetic — editing the TEXT must not discard it, or
+     * text rather than arithmetic -- editing the TEXT must not discard it, or
      * the next generation promotes `00412` to 412.
      */
     it('keeps a cell number format through an edit to its text', () => {
@@ -384,7 +384,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * A `.dsheet` may carry any OOXML code. One the menu does not list must be
-     * SHOWN, not displayed as General — otherwise the next unrelated toolbar
+     * SHOWN, not displayed as General -- otherwise the next unrelated toolbar
      * use silently overwrites a currency format the author hand-wrote.
      */
     it('surfaces a format code the menu does not list instead of hiding it', () => {
@@ -445,7 +445,7 @@ describe('SheetEditorDialogComponent', () => {
         fixture.detectChanges();
 
         // The anchor spans the range, and the swallowed cells are GONE from the
-        // DOM rather than hidden — a hidden input inside a merged region would
+        // DOM rather than hidden -- a hidden input inside a merged region would
         // still be focusable and editable.
         const anchor = cellInput(fixture, 'A1')!.closest('td')!;
         expect(anchor.getAttribute('colspan')).toBe('4');
@@ -492,7 +492,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * A plain click must COLLAPSE the selection. Without this, clicking A1 then
-     * clicking D1 would merge them — every navigation click in the grid would
+     * clicking D1 would merge them -- every navigation click in the grid would
      * arm the Merge button over a range the author never asked for.
      */
     it('collapses the selection on a plain click, so Merge needs a real range', () => {
@@ -510,7 +510,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * Column width was the last thing in the grid that could only be set by
-     * hand-editing JSON. The backend has always written it — the author simply
+     * hand-editing JSON. The backend has always written it -- the author simply
      * had no way to say it.
      */
     it('stores a width for the focused cell\'s column and renders it', () => {
@@ -534,7 +534,7 @@ describe('SheetEditorDialogComponent', () => {
 
         // ...and LAID OUT at that width, which the style attribute alone does
         // not prove. A `<col>` width is only a SUGGESTION under `table-layout:
-        // auto` — the browser may widen a column its content overflows — so this
+        // auto` -- the browser may widen a column its content overflows -- so this
         // asserts the real box, in real Chrome. Karma runs one; jsdom would not
         // have caught a table that ignored the column group.
         const cellWidth = cellInput(fixture, 'B2')!.closest('td')!.getBoundingClientRect().width;
@@ -542,7 +542,7 @@ describe('SheetEditorDialogComponent', () => {
 
         // A column the document says nothing about must be UNCHANGED. Making
         // widths binding meant switching the table to fixed layout, which
-        // re-sizes every column — including the ones nobody asked to change — so
+        // re-sizes every column -- including the ones nobody asked to change -- so
         // this pins the default against a regression no other assertion covers.
         const untouched = cellInput(fixture, 'C2')!.closest('td')!.getBoundingClientRect().width;
         expect(Math.round(untouched)).toBe(141, 'an unwidthed column keeps the grid default');
@@ -563,7 +563,7 @@ describe('SheetEditorDialogComponent', () => {
      *
      * A CELL IS EDITED FIRST, and that is load-bearing for the same reason it is
      * in the unreadable-file test below: Save is `[disabled]` until the document
-     * is dirty, and refusing the zero leaves it clean — so the first draft of
+     * is dirty, and refusing the zero leaves it clean -- so the first draft of
      * this test sent no request at all and failed on `expectOne`. Dirtying the
      * document by other means is what lets the save through, and only then does
      * the assertion about the STORED width mean anything.
@@ -603,11 +603,11 @@ describe('SheetEditorDialogComponent', () => {
     /**
      * A file the editor cannot read must NOT be saved over. Opening it blank
      * and letting a save through would replace the operator's document with an
-     * empty grid — and the editor is the only place they can repair it from.
+     * empty grid -- and the editor is the only place they can repair it from.
      *
      * The cell is EDITED FIRST, and that is load-bearing: Save is `[disabled]`
      * until the document is dirty, so a version of this test that only clicked
-     * the button passed with the guard deleted — it was asserting the disabled
+     * the button passed with the guard deleted -- it was asserting the disabled
      * attribute, not the refusal. Caught by mutating the guard and watching
      * nothing fail.
      */
@@ -638,7 +638,7 @@ describe('SheetEditorDialogComponent', () => {
     }
 
     /**
-     * How many rows are in the DOM right now — the viewport window, not the
+     * How many rows are in the DOM right now -- the viewport window, not the
  * grid's height. Those are different numbers now, and conflating
      * them is how these specs started asserting the virtualiser instead of the
      * selection.
@@ -674,7 +674,7 @@ describe('SheetEditorDialogComponent', () => {
     /**
      * `gridExtent` floors the grid whatever the document holds, so a two-cell
      * sheet still renders a spreadsheet's worth. The selection follows what is
-     * ON SCREEN rather than what happens to be populated — an author dragging a
+     * ON SCREEN rather than what happens to be populated -- an author dragging a
      * column selects the column they can see, including the empty room below
      * the last value that the grid deliberately provides for typing into.
      *
@@ -765,7 +765,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * Shift-click on a header widens the selection instead of replacing it —
+     * Shift-click on a header widens the selection instead of replacing it --
      * the same rule the cells follow, so the two gestures do not disagree.
      */
     it('extends a column selection with shift-click', () => {
@@ -806,7 +806,7 @@ describe('SheetEditorDialogComponent', () => {
 
         // Measured, not assumed. This suite runs in a REAL headless Chrome, so
         // the header has real geometry and the component starts the drag from
-        // whatever the column currently renders at — which for an unset width is
+        // whatever the column currently renders at -- which for an unset width is
         // the stylesheet's default, not zero.
         const head = header(fixture, 'Select column A');
         const startPx = head.getBoundingClientRect().width;
@@ -874,14 +874,14 @@ describe('SheetEditorDialogComponent', () => {
      * it.
      *
      * `extendTo` cancels the browser's native extend-text gesture, and that
-     * suppression means no `focus` fires — so the `extending` flag it sets to
+     * suppression means no `focus` fires -- so the `extending` flag it sets to
      * guard against a stray focus survives until the author's NEXT plain click,
      * which then gets mistaken for that stray focus and leaves the anchor where
      * it was. The following shift-click then builds a range from a cell the
      * author left long ago.
      *
      * Found in the browser: selecting C2:C4 and inserting a checkbox put one in
-     * column D as well, because the range really was C2:D4 — and inserting over
+     * column D as well, because the range really was C2:D4 -- and inserting over
      * D replaced the dropdown that was there. Silent damage to cells nobody
      * selected.
      */
@@ -927,7 +927,7 @@ describe('SheetEditorDialogComponent', () => {
     }
 
     /**
-     * A checkbox cell draws the CONTROL, not the word "TRUE" — that is what an
+     * A checkbox cell draws the CONTROL, not the word "TRUE" -- that is what an
      * author drew a tick box for. The value underneath stays TRUE/FALSE, which
      * is exactly what the generated workbook carries.
      */
@@ -946,7 +946,7 @@ describe('SheetEditorDialogComponent', () => {
         const box: HTMLInputElement = fixture.nativeElement.querySelector('input[type="checkbox"][aria-label="A2"]');
         expect(box).not.toBeNull('the cell must draw a tick box');
         expect(box.checked).toBeFalse();
-        // The control REPLACES the text input rather than sitting beside it —
+        // The control REPLACES the text input rather than sitting beside it --
         // asserted on the type, because both carry the cell's aria-label and
         // `cellInput` finds either.
         expect(cellInput(fixture, 'A2')!.type).toBe('checkbox');
@@ -967,8 +967,8 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * A dropdown KEEPS its text input — an author may still need to type a
-     * `{var:}` token into the cell — and gains an arrow offering the values.
+     * A dropdown KEEPS its text input -- an author may still need to type a
+     * `{var:}` token into the cell -- and gains an arrow offering the values.
      */
     it('offers a dropdown\'s options and writes the one picked', () => {
         const fixture = makeFixture();
@@ -1043,7 +1043,7 @@ describe('SheetEditorDialogComponent', () => {
     /** Type into a cell as a browser does: value, input event, caret at the end. */
     function typeFormula(fixture: ReturnType<typeof makeFixture>, ref: string, text: string): HTMLInputElement {
         const input = cellInput(fixture, ref)!;
-        // REAL focus — see the note on the caret-driving helper specs. Point
+        // REAL focus -- see the note on the caret-driving helper specs. Point
         // mode turns on the difference between "this input has the focus" and
         // "somebody dispatched a focus event at it".
         input.focus();
@@ -1071,7 +1071,7 @@ describe('SheetEditorDialogComponent', () => {
      *
      * The trailing `click` is load-bearing and was missing from the first
      * version of this helper. A real browser sends it EVEN WHEN the mousedown's
-     * default was cancelled, and the cell's own `(click)` handler then fired —
+     * default was cancelled, and the cell's own `(click)` handler then fired --
      * handing the formula's editing state to the cell that was merely pointed
      * at. The specs all passed; the browser did not. A synthetic gesture has to
      * carry every event the real one does, or it tests a gesture nobody makes.
@@ -1155,14 +1155,14 @@ describe('SheetEditorDialogComponent', () => {
         pointClick(cellInput(fixture, 'A3')!, true);
         fixture.detectChanges();
 
-        // No closing paren, because none was typed — the author is still
+        // No closing paren, because none was typed -- the author is still
         // mid-formula, which is exactly when point mode is used.
         expect(editing.value).toBe('=SUM(A1:A3');
     });
 
     /**
      * THE case that keeps point mode safe. After a closing paren a reference
-     * would be a syntax error, so the click has to keep its ordinary meaning —
+     * would be a syntax error, so the click has to keep its ordinary meaning --
      * otherwise clicking away from a finished formula would silently edit it.
      */
     it('leaves an ordinary click alone where a reference cannot go', () => {
@@ -1268,7 +1268,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * Saved through the real payload, because the point of a structural edit is
-     * that it reaches the document — and the formula is the part that is
+     * that it reaches the document -- and the formula is the part that is
      * silently wrong when it does not: a total that sums the wrong range still
      * looks like a number.
      */
@@ -1297,7 +1297,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * The grid body is a scroll container, so a menu anchored BELOW a cell near
-     * the bottom is clipped by it — and what gets cut is the end of the list,
+     * the bottom is clipped by it -- and what gets cut is the end of the list,
      * which is how "Clear contents" through "Checkbox" became unreachable on a
      * low row. Found in the browser; no spec could see it, because nothing here
      * renders at a real size.
@@ -1367,7 +1367,7 @@ describe('SheetEditorDialogComponent', () => {
         expect(menu.classList).not.toContain('sheet-editor__context--above');
     });
 
-    /** Contents only — the table around the cells was not what was selected. */
+    /** Contents only -- the table around the cells was not what was selected. */
     it('clears contents without dismantling the layout', () => {
         const fixture = makeFixture();
         respondWith({
@@ -1386,7 +1386,7 @@ describe('SheetEditorDialogComponent', () => {
 
     // ---- Full screen -------------------------------------------------------
 
-    /** As {@link saveButton} — by label, never by index. */
+    /** As {@link saveButton} -- by label, never by index. */
     function fullScreenButton(fixture: ReturnType<typeof makeFixture>): HTMLButtonElement {
         const button = fixture.nativeElement.querySelector('button[aria-label="Full screen"]');
         if (!(button instanceof HTMLButtonElement)) throw new Error('no full-screen button rendered');
@@ -1399,7 +1399,7 @@ describe('SheetEditorDialogComponent', () => {
     }
 
     /**
-     * A grid is the surface that most wants the room — the default width shows
+     * A grid is the surface that most wants the room -- the default width shows
      * about eight columns of a sheet that has twenty-six.
      */
     it('fills the viewport when full screen is toggled, and goes back', () => {
@@ -1423,7 +1423,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * F11 does it too, and the browser's own full screen is SUPPRESSED — its
+     * F11 does it too, and the browser's own full screen is SUPPRESSED -- its
      * version would leave the dialog exactly the size it was, with more black
      * around it.
      */
@@ -1446,7 +1446,7 @@ describe('SheetEditorDialogComponent', () => {
      * The one that can break silently. Both virtualisation windows are computed
      * from a MEASURED viewport, taken on load and on scroll and nowhere else.
      * Resizing without re-measuring leaves the grid rendering the old, smaller
-     * window — blank rows below, missing columns right — until the author
+     * window -- blank rows below, missing columns right -- until the author
      * happens to scroll, which on a sheet that now fits entirely may be never.
      */
     it('re-measures the viewport when the size changes, so the window grows with it', async () => {
@@ -1475,7 +1475,7 @@ describe('SheetEditorDialogComponent', () => {
 
     // ---- Filtering ---------------------------------------------------------
 
-    /** As {@link saveButton} — by label, never by index. */
+    /** As {@link saveButton} -- by label, never by index. */
     function filterButton(fixture: ReturnType<typeof makeFixture>): HTMLButtonElement {
         const buttons: HTMLButtonElement[] = Array.from(fixture.nativeElement.querySelectorAll('button'));
         const filter = buttons.find(b => ['Filter', 'Remove filter'].includes((b.textContent ?? '').trim()));
@@ -1551,7 +1551,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * Unchecking a value HIDES its rows, and the row leaves the DOM rather than
-     * being hidden with CSS — a hidden input inside a filtered-out row would
+     * being hidden with CSS -- a hidden input inside a filtered-out row would
      * still be focusable and editable, which is the same trap the merge case
      * names one feature over.
      *
@@ -1575,7 +1575,7 @@ describe('SheetEditorDialogComponent', () => {
         expect(cellInput(fixture, 'A3')).not.toBeNull('the Gadget row stays');
         expect(cellInput(fixture, 'A1')).not.toBeNull('the header is never filtered');
 
-        // Nothing about the DOCUMENT changed, so there is nothing to save —
+        // Nothing about the DOCUMENT changed, so there is nothing to save --
         // which is the sharpest statement that the exclusion is view state.
         expect(saveButton(fixture).disabled)
             .withContext('hiding a value must not mark the document dirty')
@@ -1603,7 +1603,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * Removing the filter must bring hidden rows back. A row left hidden by a
-     * filter that no longer exists is unreachable — there would be no dropdown
+     * filter that no longer exists is unreachable -- there would be no dropdown
      * left to restore it, and the author would see a document missing rows it
      * still contains.
      */
@@ -1634,7 +1634,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * A filter over a `{loop:}` band has no body to list — the rows do not
+     * A filter over a `{loop:}` band has no body to list -- the rows do not
      * exist until the backend expands it. The dropdown must say so rather than
      * render an empty checkbox list that reads as "this column has no values".
      */
@@ -1692,7 +1692,7 @@ describe('SheetEditorDialogComponent', () => {
      * The button is FOCUSED before it is clicked, because that is what a mouse
      * does and `click()` alone does not: a synthetic click leaves the cell
      * input holding the focus, so a test written without this would never see
-     * the cell lose it — which is the whole thing being tested one case down.
+     * the cell lose it -- which is the whole thing being tested one case down.
      */
     function openBorders(fixture: ReturnType<typeof makeFixture>, ref: string): void {
         cellInput(fixture, ref)!.focus();
@@ -1706,7 +1706,7 @@ describe('SheetEditorDialogComponent', () => {
      * The grid is `border-collapse: collapse`, so the line between two cells is
      * ONE line and the browser resolves who draws it: at equal width and style,
      * the cell further up or further left. Every cell carries a grey gridline,
-     * so declaring black on B2's top alone left the grey bottom of B1 winning —
+     * so declaring black on B2's top alone left the grey bottom of B1 winning --
      * "All borders" on a single cell showed its right and bottom ONLY.
      *
      * The assertion that matters is therefore on the NEIGHBOURS. Asserting B2's
@@ -1736,7 +1736,7 @@ describe('SheetEditorDialogComponent', () => {
      * Reaching for a toolbar control takes focus out of the cell. The input's
      * own `:focus` outline was the ONLY mark a single-cell selection had, so
      * the cell read as deselecting itself the moment the author went to rule
-     * it — and the gesture then looked like it had nothing to act on.
+     * it -- and the gesture then looked like it had nothing to act on.
      */
     it('keeps the selected cell marked once focus moves to the toolbar', () => {
         const fixture = makeFixture();
@@ -1806,7 +1806,7 @@ describe('SheetEditorDialogComponent', () => {
             ?? null;
     }
 
-    /** Focus a cell and open the catalogue over it — see {@link openBorders}. */
+    /** Focus a cell and open the catalogue over it -- see {@link openBorders}. */
     function openFunctions(fixture: ReturnType<typeof makeFixture>, ref: string): void {
         cellInput(fixture, ref)!.focus();
         fixture.detectChanges();
@@ -1945,7 +1945,7 @@ describe('SheetEditorDialogComponent', () => {
 
     /**
      * A `.xlsx` stores a date as the SERIAL its format describes, and the
-     * importer keeps it that way on purpose — converting would discard the
+     * importer keeps it that way on purpose -- converting would discard the
      * format and make the value unarithmetic. So until the grid learned to
      * render a format, an imported invoice showed `46255` where the generated
      * document showed `21/08/2026`: the editor was not showing the document.
@@ -1974,7 +1974,7 @@ describe('SheetEditorDialogComponent', () => {
     });
 
     /**
-     * The cell being EDITED shows what it stores — except a date, which shows
+     * The cell being EDITED shows what it stores -- except a date, which shows
      * as a date because nobody wants to type a serial. Excel's formula bar
      * draws exactly this distinction.
      */
@@ -2081,7 +2081,7 @@ describe('SheetEditorDialogComponent', () => {
     /**
      *  The defect this was written for. A formula built ENTIRELY by clicking
      * cells is a value the browser does not consider the user to have edited,
-     * so no `change` event ever fires for it — not on Enter, not on clicking
+     * so no `change` event ever fires for it -- not on Enter, not on clicking
      * away. Measured in a real browser: `input`, then `blur`, and no `change`
      * at all. The formula was silently thrown away.
      */
@@ -2302,7 +2302,7 @@ describe('SheetEditorDialogComponent', () => {
     /**
      * A spreadsheet has two states and this grid has one: every cell is an
      * input, always showing a caret. So the arrows belong to the GRID until
-     * something is typed — otherwise they either never move between cells, or
+     * something is typed -- otherwise they either never move between cells, or
      * always do, and neither is a spreadsheet.
      */
     it('moves the selection with the arrows while a cell is only selected', () => {

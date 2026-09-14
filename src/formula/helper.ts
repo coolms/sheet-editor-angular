@@ -2,7 +2,7 @@
  * What the formula helper should show, given a formula and a caret.
  *
  * A pure function of (text, caret), deliberately: the popup is the easy half,
- * and the hard half — "what is the caret sitting inside?" — is a question about
+ * and the hard half -- "what is the caret sitting inside?" -- is a question about
  * tokens that can be answered and TESTED without a DOM. Every case below is a
  * string and a number.
  *
@@ -11,7 +11,7 @@
  *   `=SU`            -> COMPLETIONS: the functions beginning `SU`
  *   `=SUM(A1, `      -> SIGNATURE:   SUM, with its second argument highlighted
  *
- * A formula being typed is almost never parseable — `=SUM(A1,` is not a tree —
+ * A formula being typed is almost never parseable -- `=SUM(A1,` is not a tree --
  * so this reads the token stream rather than a parse. That is why the tokeniser
  * keeps whitespace: a caret offset has to land on a token, and a stream with
  * holes in it cannot say where the caret is.
@@ -42,9 +42,9 @@ const NONE: HelperState = { kind: 'none' };
 /**
  * The argument names in a signature, so the popup can bold the current one.
  *
- * Split at commas OUTSIDE the square brackets: `SUM(number1, [number2, …])`
+ * Split at commas OUTSIDE the square brackets: `SUM(number1, [number2, ...])`
  * has two arguments, not three, and a plain `split(',')` reports the optional
- * group as two — which would then highlight the wrong one from the second
+ * group as two -- which would then highlight the wrong one from the second
  * argument onwards.
  */
 export function signatureParts(fn: FormulaFunction): readonly string[] {
@@ -72,8 +72,8 @@ export function signatureParts(fn: FormulaFunction): readonly string[] {
 /**
  * Which argument a signature is describing at `index`.
  *
- * The last argument of a variadic signature repeats — `SUM(number1,
- * [number2, …])` describes the fifth argument with its second part — so the
+ * The last argument of a variadic signature repeats -- `SUM(number1,
+ * [number2, ...])` describes the fifth argument with its second part -- so the
  * index is clamped rather than running off the end.
  */
 export function argumentLabel(fn: FormulaFunction, index: number): string | null {
@@ -109,7 +109,7 @@ export interface FormulaReference {
  * ## Why this reads TOKENS rather than a regex over the text
  *
  * Because `"B4"` inside a string is not a reference and `LOG10(` is not column
- * LOG row 10 — the tokeniser already knows both, and a second implementation
+ * LOG row 10 -- the tokeniser already knows both, and a second implementation
  * that half-knew them would highlight cells the formula never touches, which
  * is worse than highlighting none: it teaches the author to distrust the
  * highlight.
@@ -165,8 +165,8 @@ export function referencesIn(text: string): FormulaReference[] {
  *
  * In every spreadsheet, clicking a cell while a formula is being typed inserts
  * that cell's reference instead of moving the cursor. That is only true in the
- * places a reference could legally go — after `=`, an operator, `(`, `,` or `:`
- * — and everywhere else a click has to keep its ordinary meaning. Getting that
+ * places a reference could legally go -- after `=`, an operator, `(`, `,` or `:`
+ * -- and everywhere else a click has to keep its ordinary meaning. Getting that
  * wrong is worse than not having the feature: an author who clicks away from a
  * half-typed formula would find their formula edited instead of left alone.
  *
@@ -240,7 +240,7 @@ export function pointInsertAt(text: string, caret: number): { from: number; to: 
 /**
  * The state for a raw cell input and a caret offset into it.
  *
- * `text` is what the input holds, INCLUDING the leading `=` — this reads what
+ * `text` is what the input holds, INCLUDING the leading `=` -- this reads what
  * the author sees, not what the document stores, and a cell that is not a
  * formula gets no helper at all.
  */
@@ -316,7 +316,7 @@ export function helperAt(text: string, caret: number): HelperState {
 /**
  * Accept a completion: the text to put in the cell, and where the caret lands.
  *
- * The `(` comes with it, and the caret goes INSIDE — the author's next keystroke
+ * The `(` comes with it, and the caret goes INSIDE -- the author's next keystroke
  * is an argument, never the bracket they just asked for. A function taking no
  * arguments closes itself, so `TRUE()` needs no second thought.
  */

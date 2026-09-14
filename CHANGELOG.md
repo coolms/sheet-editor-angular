@@ -9,15 +9,15 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## 2.0.0-alpha.2 — 2026-09-03
+## 2.0.0-alpha.2 -- 2026-09-03
 
 **A pre-release, carrying no compatibility promise.** Published under the
 `alpha` dist-tag.
 
 The spreadsheet editor: a grid over an immutable sheet-document model, with
 cell formats, merges, column and row sizing, and multi-sheet editing. The model
-is public and separately useful — reading or building a sheet does not require
-opening a dialog — and every mutator is a `with*` function returning a new
+is public and separately useful -- reading or building a sheet does not require
+opening a dialog -- and every mutator is a `with*` function returning a new
 document, so undo and change detection are properties of the data rather than
 bookkeeping in the component.
 
@@ -29,7 +29,7 @@ find-and-replace and clipboard handling.
 
 - **`@coolms/document-engine` was declared an optional peer and imported
   unconditionally**, which made the package unbuildable from a clean install.
-  Only the cell font picker reads it, and it is now fetched on demand — the
+  Only the cell font picker reads it, and it is now fetched on demand -- the
   path was already asynchronous and already had to survive the font manifest
   not arriving, so a peer nobody installed lands where a failed fetch already
   landed: the select stays on "Default".
