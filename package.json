@@ -34,6 +34,9 @@
     "xlsx",
     "editor"
   ],
+  "bugs": {
+    "url": "https://github.com/coolms/sheet-editor-angular/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/coolms/sheet-editor-angular.git"

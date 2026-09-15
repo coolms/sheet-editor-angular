@@ -9,6 +9,15 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Added
+
+- Declares `bugs` so a page imported from this package, and the catalogue,
+  know where a correction is filed. The registry filled the gap from GitHub when
+  the manifest was silent; the declared field is the one that holds on any
+  registry.
+
 ## 2.0.0-alpha.2 -- 2026-09-03
 
 **A pre-release, carrying no compatibility promise.** Published under the
