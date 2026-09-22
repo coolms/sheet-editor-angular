@@ -7,6 +7,7 @@
  * `with*` transforms -- which a caller needs to read a sheet, or to build one
  * without opening a dialog at all.
  */
+export * from './sheet-document.constants';
 export * from './sheet-document.model';
 export * from './sheet-editor-dialog.component';
 
