@@ -1290,7 +1290,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            selected the cells may all be scrolled out of view. */
         .sheet-editor__head--selected {
             background: var(--cms-selected);
-            color: var(--cms-accent-fg);
+            color: var(--cms-selected-fg);
         }
         /* The resize target, sitting on the column's right edge and overhanging
            it by half its width so the grab area straddles the border the author
@@ -1300,7 +1300,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             position: absolute; top: 0; bottom: 0; right: -3px;
             width: 6px; cursor: col-resize; z-index: 4;
         }
-        .sheet-editor__grip:hover { background: var(--cms-accent); }
+        .sheet-editor__grip:hover { background: var(--cms-primary); }
         /* The row equivalent, on the BOTTOM edge and resizing vertically. */
         .sheet-editor__grip--row {
             top: auto; left: 0; right: 0; bottom: -3px;
@@ -1402,7 +1402,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             padding: 4px 8px; text-align: left; font: inherit; color: inherit;
             cursor: pointer;
         }
-        .sheet-editor__helper-item--on { background: var(--cms-selected); color: var(--cms-accent-fg); }
+        .sheet-editor__helper-item--on { background: var(--cms-selected); color: var(--cms-selected-fg); }
         .sheet-editor__helper-sig { padding: 4px 8px; }
         .sheet-editor__helper-name { font-weight: 600; }
         .sheet-editor__helper-hint { display: block; font-size: .85em; opacity: .75; }
