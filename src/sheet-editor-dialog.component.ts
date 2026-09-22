@@ -1289,8 +1289,8 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
            the edge as well as in the highlighted cells — with a full column
            selected the cells may all be scrolled out of view. */
         .sheet-editor__head--selected {
-            background: var(--cms-primary);
-            color: var(--cms-text-inverse);
+            background: var(--cms-selected);
+            color: var(--cms-accent-fg);
         }
         /* The resize target, sitting on the column's right edge and overhanging
            it by half its width so the grab area straddles the border the author
@@ -1300,7 +1300,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             position: absolute; top: 0; bottom: 0; right: -3px;
             width: 6px; cursor: col-resize; z-index: 4;
         }
-        .sheet-editor__grip:hover { background: var(--cms-primary); }
+        .sheet-editor__grip:hover { background: var(--cms-accent); }
         /* The row equivalent, on the BOTTOM edge and resizing vertically. */
         .sheet-editor__grip--row {
             top: auto; left: 0; right: 0; bottom: -3px;
@@ -1336,14 +1336,14 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         /* A merged cell reads as one box: the anchor already spans its columns
            and rows via colspan/rowspan, and the covered cells emit no td. */
         .sheet-editor__cell--merged { background: var(--cms-surface-muted, #f3f4f6); }
-        .sheet-editor__cell--in-range { box-shadow: inset 0 0 0 1px var(--cms-primary); }
+        .sheet-editor__cell--in-range { box-shadow: inset 0 0 0 1px var(--cms-selected); }
         /* The selected cell keeps a mark of its own once focus goes to a
            TOOLBAR control. Until this existed the only mark was the input's
            :focus outline, so reaching for Borders read as the cell deselecting
            itself -- and the gesture then looked like it had nothing to act on.
            After --in-range deliberately: the active cell of a range is the one
            the toolbar reports. */
-        .sheet-editor__cell--active { box-shadow: inset 0 0 0 2px var(--cms-primary); }
+        .sheet-editor__cell--active { box-shadow: inset 0 0 0 2px var(--cms-selected); }
         /* 100%, not a fixed 140px: under table-layout:fixed the COLUMN sets the
            width, and an input that kept its own would leave dead space in a
            widened column and overflow a narrowed one. */
@@ -1402,7 +1402,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             padding: 4px 8px; text-align: left; font: inherit; color: inherit;
             cursor: pointer;
         }
-        .sheet-editor__helper-item--on { background: var(--cms-primary); color: var(--cms-on-chrome); }
+        .sheet-editor__helper-item--on { background: var(--cms-selected); color: var(--cms-accent-fg); }
         .sheet-editor__helper-sig { padding: 4px 8px; }
         .sheet-editor__helper-name { font-weight: 600; }
         .sheet-editor__helper-hint { display: block; font-size: .85em; opacity: .75; }
