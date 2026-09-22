@@ -13,6 +13,10 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- The selected column or row header and the function helper's current item
+  put their label in `--cms-selected-fg`, the foreground on the solid mark;
+  the resize grip's hover reads `--cms-primary` -- a handle is an
+  affordance, and affordances are the primary by ruling.
 - The selection reads `--cms-selected`, the host theme's token for "this one
   is selected", instead of the blue `--cms-primary`: the active cell's ring,
   the range's inset, the selected column or row header (its label in
