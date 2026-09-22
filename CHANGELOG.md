@@ -11,6 +11,17 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Changed
+
+- The selection reads `--cms-selected`, the host theme's token for "this one
+  is selected", instead of the blue `--cms-primary`: the active cell's ring,
+  the range's inset, the selected column or row header (its label in
+  `--cms-accent-fg`, the foreground for a solid mark) and the function
+  helper's current item. The resize grip's hover reads `--cms-accent`, as the
+  kit's own handle does. A lit filter button, the formula cell's text and the
+  input's focus ring keep `--cms-primary`: a filter that is filtering, a
+  formula and focus are not selections.
+
 ### Added
 
 - Declares `bugs` so a page imported from this package, and the catalogue,
