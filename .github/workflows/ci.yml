@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  # Weekly, so a break from a dependency or a toolchain release shows up on a
+  # Monday rather than inside someone's pull request -- the schedule resolves
+  # the NEWEST versions; a push or a pull request installs the lockfile.
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  # The steps live in coolms/.github because every ng-packagr package in the set
+  # has byte-identical scripts.
+  ci:
+    uses: coolms/.github/.github/workflows/angular-library.yml@develop
+    with:
+      bundle: dist/fesm2022/coolms-sheet-editor-angular.mjs
