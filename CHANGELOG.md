@@ -13,6 +13,10 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
+- A focused cell's input draws its ring in `--cms-focus-ring`, the host's
+  focus colour, instead of `--cms-primary`: the grid's ring now matches every
+  other focused control in the host. A host whose tokens predate the ring
+  still gets `--cms-primary`.
 - The selected column or row header and the function helper's current item
   put their label in `--cms-selected-fg`, the foreground on the solid mark;
   the resize grip's hover reads `--cms-primary` -- a handle is an
