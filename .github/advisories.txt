@@ -1,10 +1,12 @@
 # Advisories known in this repository's committed lockfile and not yet cleared.
-# The advisories job (coolms/.github, npm-advisories.yml) fails on an advisory that is not here, and on a line here
-# whose advisory is no longer reported, so this list only shrinks: take a line off when an update clears it.
+# The advisories job (coolms/.github, npm-advisories.yml) fails on an advisory that is not here, on a line here whose
+# advisory is no longer reported (so the list only shrinks), and on a line past its review date.
 #
-#   <package> <advisory id> <severity> <why it stays>
+#   <package> <advisory id> <severity> <review by> <why it stays>
 #
-# Started 2026-10-07 with what `npm audit` reported then: 1 advisory(ies) over 1 package(s). Each stays until an
-# update clears it; an update is a change of its own, made and reviewed as one.
+# Every line is reviewed again by its date: at most 30 days out for critical and high, 90 for the rest. A review writes
+# a new date and the reason as it stands then; an update that clears the advisory takes the line off instead. The
+# reasons below were measured on 2026-10-07 from this lockfile: which direct dependencies bring the package in, whether
+# it ships, and what npm offers to clear it.
 
-source-map-js  GHSA-68fv-2mgg-jv7q  high      present when the list was started; awaiting an update
+source-map-js  GHSA-68fv-2mgg-jv7q  high      2026-11-06  Build and test tooling only, not in the published package (through ng-packagr); a lockfile update within the declared ranges clears it.
