@@ -1,0 +1,10 @@
+# Advisories known in this repository's committed lockfile and not yet cleared.
+# The advisories job (coolms/.github, npm-advisories.yml) fails on an advisory that is not here, and on a line here
+# whose advisory is no longer reported, so this list only shrinks: take a line off when an update clears it.
+#
+#   <package> <advisory id> <severity> <why it stays>
+#
+# Started 2026-10-07 with what `npm audit` reported then: 1 advisory(ies) over 1 package(s). Each stays until an
+# update clears it; an update is a change of its own, made and reviewed as one.
+
+source-map-js  GHSA-68fv-2mgg-jv7q  high      present when the list was started; awaiting an update
