@@ -1371,7 +1371,11 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             position: absolute; inset: 0; resize: none; overflow: hidden;
             white-space: pre-wrap; overflow-wrap: break-word; line-height: inherit;
         }
-        .sheet-editor__input:focus { outline: 2px solid var(--cms-primary); outline-offset: -2px; }
+        /* The host's focus ring, as every other focused control in the host draws it.
+           The primary fallback is for a host on tokens older than the ring. */
+        .sheet-editor__input:focus {
+            outline: 2px solid var(--cms-focus-ring, var(--cms-primary)); outline-offset: -2px;
+        }
         .sheet-editor__cell--bold .sheet-editor__input { font-weight: 700; }
         /* A formula shows what it COMPUTES; the cell being edited shows the
            formula itself. The colour is what tells the two apart from a literal
