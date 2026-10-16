@@ -11,6 +11,19 @@ predate this file would be a worse record than not having them.
 
 ## Unreleased
 
+### Fixed
+
+- A sheet is saved only over the version it was read at. The editor
+  reads the content and its version (`contentHash`) in one read, and every
+  save sends that version as `If-Match`. A file saved by someone else since
+  is refused (412) and one deleted since is not made again (404): the
+  grid says so and offers Reload or Save as a copy, and never retries or
+  merges on its own. A read that names no version is never saved over.
+  Before, a save overwrote whatever was there, so of two people editing one
+  file the later save silently replaced the earlier one.
+- Save as a copy writes next to the original with overwrite off, so it
+  never replaces a file of that name (409); the editor then edits the copy.
+
 ### Changed
 
 - The selected column or row header and the function helper's current item

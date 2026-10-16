@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, NgZone, computed, inject, signal } from '@angular/core';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
 import { AppConfigState } from '@coolms/core-angular';
@@ -727,6 +727,25 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
                 </div>
             }
 
+            @if (notice(); as n) {
+                <div class="sheet-editor__notice" role="alert">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <span>
+                        @switch (n) {
+                            @case ('changed') { This file was saved by someone else since you opened it. Your edits are still here, and nothing of theirs was overwritten. }
+                            @case ('deleted') { This file was deleted since you opened it. Your edits are still here; saving cannot make it again. }
+                            @case ('unversioned') { The version of this file could not be read, so it cannot be saved over. Your edits can be saved as a copy. }
+                        }
+                    </span>
+                    <span class="sheet-editor__notice-actions">
+                        @if (n !== 'deleted') {
+                            <button class="cms-btn cms-btn-sm" type="button" (click)="reload()">Reload</button>
+                        }
+                        <button class="cms-btn cms-btn-sm cms-btn-primary" type="button" (click)="saveAsCopy()">Save as a copy</button>
+                    </span>
+                </div>
+            }
+
             <!-- Any mousedown in the grid dismisses an open filter menu. The
                  menu itself stops propagation, so a click INSIDE it survives —
                  the same guard the formula helper uses one cell over. -->
@@ -1165,6 +1184,13 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
             padding: 10px 16px; flex-shrink: 0;
         }
         .sheet-editor__header { border-bottom: 1px solid var(--cms-border); }
+        .sheet-editor__notice {
+            display: flex; align-items: center; gap: 10px; padding: 8px 16px; flex-shrink: 0;
+            background: var(--cms-warning-light); color: var(--cms-warning-text);
+            border-bottom: 1px solid var(--cms-border); font-size: .8125rem;
+        }
+        .sheet-editor__notice > span:first-of-type { flex: 1; }
+        .sheet-editor__notice-actions { display: flex; gap: 6px; flex-shrink: 0; }
         .sheet-editor__footer { border-top: 1px solid var(--cms-border); font-size: .8125rem; }
         .sheet-editor__title {
             font-size: .875rem; font-weight: 600;
@@ -1644,6 +1670,21 @@ export class SheetEditorDialogComponent {
     private readonly host       = inject(ElementRef<HTMLElement>);
 
     readonly node = this.data.node;
+
+    /**
+     * The file this editor writes to, and the version of it the open content was read at (the read's `contentHash`).
+     * Every save names that version (If-Match): a file saved by someone else since is refused (412) and one deleted
+     * since is not made again (404), so two people editing one file never overwrite each other unseen. After a save
+     * the version is the one the save answered; after Save as a copy, the copy and its version.
+     */
+    private readonly target = signal<{ path: string; version: string | null }>({ path: this.node.path, version: null });
+
+    /**
+     * Why the open content can no longer be saved over its file: it changed or went since it was read, or its version
+     * was never read. The notice says so and offers Reload or Save as a copy; a save never retries on its own and
+     * never merges.
+     */
+    protected readonly notice = signal<'changed' | 'deleted' | 'unversioned' | null>(null);
 
     protected readonly loading = signal(true);
     protected readonly saving  = signal(false);
@@ -5090,20 +5131,113 @@ export class SheetEditorDialogComponent {
             return;
         }
 
+        // Over a file that changed or went, or whose version was never read: the edits go to a copy, never over it.
+        const version = this.target().version;
+        if (this.notice() !== null || version === null) {
+            this.notice.set(this.notice() ?? 'unversioned');
+            this.saveAsCopy();
+
+            return;
+        }
+
         this.saving.set(true);
-        this.http.put<{ contentHash: string }>(url, { content: serialiseSheetDocument(doc) })
+        const headers = new HttpHeaders({ 'If-Match': `"${version}"` });
+        this.http.put<{ contentHash?: string | null }>(url, { content: serialiseSheetDocument(doc) }, { headers })
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
-                next: () => {
+                next: (res) => {
+                    const next = res?.contentHash ?? null;
+                    this.target.update((t) => ({ ...t, version: next }));
+                    if (next === null) {
+                        this.notice.set('unversioned');
+                    }
                     this.dirty.set(false);
                     this.saving.set(false);
-                    this.toast.success('Saved', this.node.name);
+                    this.toast.success('Saved', this.fileName());
                 },
-                error: () => {
+                error: (err: unknown) => {
                     this.saving.set(false);
+                    const status = err instanceof HttpErrorResponse ? err.status : 0;
+                    if (status === 412 || status === 404) {
+                        this.notice.set(status === 412 ? 'changed' : 'deleted');
+
+                        return;
+                    }
                     this.toast.error('Save failed');
                 },
             });
+    }
+
+    /**
+     * The file as it is now, in place of the edits: the content and its version read again in one read. Edits are
+     * discarded only after the person confirms it.
+     */
+    protected reload(): void {
+        const go = (): void => {
+            this.notice.set(null);
+            this.dirty.set(false);
+            this.loading.set(true);
+            this.load();
+        };
+        if (!this.dirty()) {
+            go();
+
+            return;
+        }
+        this.confirm.confirmDiscard(this.fileName()).subscribe((discard) => {
+            if (discard) go();
+        });
+    }
+
+    /**
+     * The edits saved as a new file next to the original, never over it: the binary write with overwrite off, so a
+     * file of the chosen name is not replaced (409). The editor then edits the copy. Declined, the edits stay here.
+     */
+    protected async saveAsCopy(): Promise<void> {
+        const doc = this.doc();
+        if (!doc) return;
+        const original = this.target().path;
+        const dir = original.slice(0, original.lastIndexOf('/'));
+        const name = original.slice(original.lastIndexOf('/') + 1);
+        const dot = name.lastIndexOf('.');
+        const suggested = dot > 0 ? `${name.slice(0, dot)} (copy)${name.slice(dot)}` : `${name} (copy)`;
+        const chosen = await this.dialogs.input({
+            title:        this.notice() === 'deleted' ? 'The file was deleted' : 'Save your edits as a copy',
+            label:        'Save your edits as a copy named',
+            initialValue: suggested,
+            confirmLabel: 'Save as a copy',
+            cancelLabel:  'Keep editing',
+            required:     true,
+            validator:    (v) => (v.includes('/') ? 'A name, without a folder' : null),
+        });
+        if (chosen === null) return;
+        const binaryUrl = this.store.selectSnapshot(AppConfigState.manifest)?.vfs?.binaryWriteUrl;
+        if (!binaryUrl) return;
+        const copyPath = `${dir}/${chosen.trim()}`;
+        const form = new FormData();
+        form.append('path', copyPath);
+        form.append('overwrite', '0');
+        form.append('file', new Blob([serialiseSheetDocument(doc)], { type: this.node.mimeType ?? 'application/json' }),
+            chosen.trim());
+        this.http.post<{ contentHash?: string | null }>(binaryUrl, form)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+                next: (res) => {
+                    this.target.set({ path: copyPath, version: res?.contentHash ?? null });
+                    this.notice.set(res?.contentHash ? null : 'unversioned');
+                    this.dirty.set(false);
+                    this.toast.success('Saved as a copy', chosen.trim());
+                },
+                error: (err: unknown) => {
+                    const status = err instanceof HttpErrorResponse ? err.status : 0;
+                    this.toast.error(status === 409 ? 'A file with that name exists' : 'The copy could not be saved',
+                        chosen.trim());
+                },
+            });
+    }
+
+    private fileName(): string {
+        return this.target().path.split('/').pop() ?? this.node.name;
     }
 
     private load(): void {
@@ -5114,10 +5248,15 @@ export class SheetEditorDialogComponent {
             return;
         }
 
-        this.http.get<{ content: string }>(url)
+        // The content and the version it is at, from one read: the version every save of this content names.
+        this.http.get<{ content: string; contentHash?: string | null }>(url)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
-                next: ({ content }) => this.apply(content),
+                next: ({ content, contentHash }) => {
+                    this.target.update((t) => ({ ...t, version: contentHash ?? null }));
+                    this.notice.set(contentHash ? null : 'unversioned');
+                    this.apply(content);
+                },
                 error: () => {
                     this.loading.set(false);
                     this.unreadable.set(true);
@@ -5166,6 +5305,6 @@ export class SheetEditorDialogComponent {
 
     private contentUrl(): string | undefined {
         return this.store.selectSnapshot(AppConfigState.manifest)
-            ?.vfs?.fileContentUrl?.replace('{path}', encodeURIComponent(this.node.path));
+            ?.vfs?.fileContentUrl?.replace('{path}', encodeURIComponent(this.target().path));
     }
 }
