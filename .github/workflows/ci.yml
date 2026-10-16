@@ -21,3 +21,7 @@ jobs:
     uses: coolms/.github/.github/workflows/angular-library.yml@develop
     with:
       bundle: dist/fesm2022/coolms-sheet-editor-angular.mjs
+
+  # README, a LICENSE matching the manifest, and CHANGELOG (coolms/.github's basic-files.yml), pinned to a commit.
+  basic-files:
+    uses: coolms/.github/.github/workflows/basic-files.yml@595d36957a135e7d753abe34ca1ce90a0a6f2215
