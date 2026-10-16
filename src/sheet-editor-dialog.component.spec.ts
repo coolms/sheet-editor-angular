@@ -1,8 +1,10 @@
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgxsModule, Store } from '@ngxs/store';
+import { of } from 'rxjs';
 import { AppConfigState } from '@coolms/core-angular';
+import { ConfirmDialogService, NativeDialogService } from '@coolms/ui-angular';
 import { SheetEditorDialogComponent } from './sheet-editor-dialog.component';
 import { columnWidthFromPx, columnWidthToPx, gridExtent, indexToColumn } from './sheet-document.model';
 import { dateToSerial } from './number-format';
@@ -27,9 +29,9 @@ describe('SheetEditorDialogComponent', () => {
         return fixture;
     }
 
-    /** Answer the load request the constructor fires. */
+    /** Answer the load request the constructor fires: the content and its version, as the server answers both. */
     function respondWith(doc: unknown): void {
-        httpMock.expectOne(CONTENT_URL).flush({ content: JSON.stringify(doc) });
+        httpMock.expectOne(CONTENT_URL).flush({ content: JSON.stringify(doc), contentHash: 'v1' });
     }
 
     function cellInput(fixture: ReturnType<typeof makeFixture>, ref: string): HTMLInputElement | null {
@@ -3433,5 +3435,276 @@ describe('SheetEditorDialogComponent', () => {
         expect(columnWidthToPx(written.sheets['S'].columnWidths?.['B'] ?? 0))
             .withContext('a drag at 200% must not resize twice as fast as the pointer')
             .toBeCloseTo(191, -1);
+    });
+});
+
+/**
+ * A spreadsheet saves only over the version it was read at.
+ *
+ * The editor reads the content and its version in one read, and every save names that version (If-Match). A file
+ * saved by someone else since is refused (412), one deleted since is not made again (404), and the editor then says
+ * so and offers Reload or Save as a copy -- it never retries on its own and never merges. Two people editing one
+ * file therefore never overwrite each other unseen, which is what the version is for.
+ *
+ * The server here is a fake that keeps one file the way the real one does: a save naming the current version is
+ * applied and answers the new version; one naming another is refused 412; one naming none is applied unchecked, as
+ * the real server still does for a client that sends none.
+ */
+describe('SheetEditorDialogComponent -- saves over the version it read', () => {
+    const URL = 'https://api.test/vfs/content?path=%2Fdocs%2Fbudget.dsheet';
+    const BINARY = 'https://api.test/vfs/binary';
+    let httpMock: HttpTestingController;
+    let copyName: string | null;
+    let discard: boolean;
+
+    /** The one file both sessions open, as the server holds it. */
+    let stored: { content: string; hash: string; deleted: boolean };
+    let saves: number;
+
+    const doc = (a1: string) => JSON.stringify({ version: 1, sheets: { S: { cells: { A1: { value: a1 } } } } });
+
+    beforeEach(() => {
+        copyName = 'budget (copy).dsheet';
+        discard = true;
+        stored = { content: doc('opening balance'), hash: 'v1', deleted: false };
+        saves = 0;
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule, SheetEditorDialogComponent, NgxsModule.forRoot([AppConfigState])],
+            providers: [
+                { provide: DIALOG_DATA, useValue: { node: { path: '/docs/budget.dsheet', name: 'budget.dsheet', mimeType: 'application/x-coolms-sheet+json' } } },
+                { provide: DialogRef, useValue: { close: (): void => {} } },
+                { provide: NativeDialogService, useValue: { input: () => Promise.resolve(copyName), confirm: () => Promise.resolve(true) } },
+                { provide: ConfirmDialogService, useValue: { confirmDiscard: () => of(discard) } },
+            ],
+        });
+        TestBed.inject(Store).reset({
+            appConfig: {
+                loaded: true,
+                config: { manifest: { vfs: { fileContentUrl: 'https://api.test/vfs/content?path={path}', binaryWriteUrl: BINARY } } },
+            },
+        });
+        httpMock = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => httpMock.verify());
+
+    /** The server's answer to every pending read and save of the file. */
+    function serve(): void {
+        for (const req of httpMock.match(URL)) {
+            answer(req);
+        }
+    }
+
+    function answer(req: TestRequest): void {
+        if (req.request.method === 'GET') {
+            req.flush({ content: stored.content, contentHash: stored.hash });
+
+            return;
+        }
+        saves++;
+        const named = req.request.headers.get('If-Match');
+        if (stored.deleted) {
+            req.flush({ title: 'Not Found' }, { status: 404, statusText: 'Not Found' });
+
+            return;
+        }
+        if (named !== null && named !== `"${stored.hash}"`) {
+            req.flush({ title: 'Precondition Failed' }, { status: 412, statusText: 'Precondition Failed' });
+
+            return;
+        }
+        stored = { content: req.request.body.content, hash: 'v' + (Number(stored.hash.slice(1)) + 1), deleted: false };
+        req.flush({ contentHash: stored.hash });
+    }
+
+    function open() {
+        const fixture = TestBed.createComponent(SheetEditorDialogComponent);
+        fixture.detectChanges();
+
+        return fixture;
+    }
+
+    function edit(fixture: ReturnType<typeof open>, value: string): void {
+        const input: HTMLInputElement = fixture.nativeElement.querySelector('input[aria-label="A1"]');
+        input.value = value;
+        input.dispatchEvent(new Event('change'));
+        fixture.detectChanges();
+    }
+
+    function click(fixture: ReturnType<typeof open>, label: string): void {
+        const button = (Array.from(fixture.nativeElement.querySelectorAll('button')) as HTMLButtonElement[])
+            .find((b) => (b.textContent ?? '').trim() === label);
+        if (!button) throw new Error('no button "' + label + '"');
+        button.click();
+        fixture.detectChanges();
+    }
+
+    function a1(fixture: ReturnType<typeof open>): string {
+        return (fixture.nativeElement.querySelector('input[aria-label="A1"]') as HTMLInputElement).value;
+    }
+
+    function notice(fixture: ReturnType<typeof open>): string {
+        return (fixture.nativeElement.querySelector('.sheet-editor__notice')?.textContent ?? '').replace(/\s+/g, ' ').trim();
+    }
+
+    it('saves naming the version it read, and the next save names the version that save answered', () => {
+        const sheet = open();
+        serve();
+        sheet.detectChanges();
+
+        edit(sheet, 'first');
+        click(sheet, 'Save');
+        const first = httpMock.expectOne(URL);
+        expect(first.request.method).toBe('PUT');
+        expect(first.request.headers.get('If-Match')).toBe('"v1"');
+        answer(first);
+
+        edit(sheet, 'second');
+        click(sheet, 'Save');
+        const second = httpMock.expectOne(URL);
+        expect(second.request.headers.get('If-Match')).toBe('"v2"');
+        answer(second);
+        expect(JSON.parse(stored.content).sheets.S.cells.A1.value).toBe('second');
+    });
+
+    it('two sessions on one file: the second save is refused, and nothing of either is lost', () => {
+        const alice = open();
+        const bob = open();
+        serve();
+        alice.detectChanges();
+        bob.detectChanges();
+
+        edit(bob, 'from Bob');
+        click(bob, 'Save');
+        serve();
+
+        edit(alice, 'from Alice');
+        click(alice, 'Save');
+        serve();
+        alice.detectChanges();
+
+        // Bob's save stands: Alice's did not overwrite it.
+        expect(JSON.parse(stored.content).sheets.S.cells.A1.value).toBe('from Bob');
+        expect(stored.hash).toBe('v2');
+        // Alice is told, and her edits are still in her editor, unsaved.
+        expect(notice(alice)).toContain('saved by someone else since you opened it');
+        expect(a1(alice)).toBe('from Alice');
+        expect(alice.componentInstance['dirty']()).toBeTrue();
+        // One save each: the refused one was not retried.
+        expect(saves).toBe(2);
+    });
+
+    it('a file deleted since it was opened is not made again: 404, said, and no Reload offered', () => {
+        const sheet = open();
+        serve();
+        sheet.detectChanges();
+        stored.deleted = true;
+
+        edit(sheet, 'late edit');
+        click(sheet, 'Save');
+        serve();
+        sheet.detectChanges();
+
+        expect(notice(sheet)).toContain('deleted since you opened it');
+        expect(notice(sheet)).not.toContain('Reload');
+        expect(a1(sheet)).toBe('late edit');
+    });
+
+    it('Reload, confirmed, reads the file and its version again; declined, the edits stay', () => {
+        const sheet = open();
+        serve();
+        sheet.detectChanges();
+        stored = { content: doc('someone else'), hash: 'v7', deleted: false };
+
+        edit(sheet, 'mine');
+        click(sheet, 'Save');
+        serve();
+        sheet.detectChanges();
+
+        discard = false;
+        click(sheet, 'Reload');
+        httpMock.expectNone(URL);
+        expect(a1(sheet)).toBe('mine');
+
+        discard = true;
+        click(sheet, 'Reload');
+        serve();
+        sheet.detectChanges();
+        expect(a1(sheet)).toBe('someone else');
+        expect(notice(sheet)).toBe('');
+
+        // The reload's version is the one the next save names.
+        edit(sheet, 'after reload');
+        click(sheet, 'Save');
+        const save = httpMock.expectOne(URL);
+        expect(save.request.headers.get('If-Match')).toBe('"v7"');
+        answer(save);
+    });
+
+    it('Save as a copy writes next to the original with overwrite off, and the editor then edits the copy', async () => {
+        const sheet = open();
+        serve();
+        sheet.detectChanges();
+        stored.hash = 'v9';
+
+        edit(sheet, 'mine');
+        click(sheet, 'Save');
+        serve();
+        sheet.detectChanges();
+        click(sheet, 'Save as a copy');
+        await Promise.resolve();
+        await Promise.resolve();
+
+        const copy = httpMock.expectOne(BINARY);
+        const form = copy.request.body as FormData;
+        expect(form.get('path')).toBe('/docs/budget (copy).dsheet');
+        expect(form.get('overwrite')).toBe('0');
+        copy.flush({ contentHash: 'c1' });
+        sheet.detectChanges();
+        expect(notice(sheet)).toBe('');
+
+        // The original was not touched; the next save goes to the copy, naming its version.
+        expect(JSON.parse(stored.content).sheets.S.cells.A1.value).toBe('opening balance');
+        edit(sheet, 'more');
+        click(sheet, 'Save');
+        const next = httpMock.expectOne('https://api.test/vfs/content?path=%2Fdocs%2Fbudget%20(copy).dsheet');
+        expect(next.request.headers.get('If-Match')).toBe('"c1"');
+        next.flush({ contentHash: 'c2' });
+    });
+
+    it('a read that names no version: nothing is saved over the file, the edits go to a copy', async () => {
+        const sheet = open();
+        httpMock.expectOne(URL).flush({ content: stored.content });
+        sheet.detectChanges();
+        expect(notice(sheet)).toContain('could not be read');
+
+        copyName = null;
+        edit(sheet, 'mine');
+        click(sheet, 'Save');
+        await Promise.resolve();
+        httpMock.expectNone(URL);
+        expect(a1(sheet)).toBe('mine');
+    });
+
+    it('a read that failed: no sheet to edit, and a save asked for anyway writes nothing', () => {
+        const sheet = open();
+        httpMock.expectOne(URL).flush({ title: 'Server Error' }, { status: 500, statusText: 'Server Error' });
+        sheet.detectChanges();
+
+        sheet.componentInstance['save']();
+        httpMock.expectNone(URL);
+        httpMock.expectNone(BINARY);
+        expect(JSON.parse(stored.content).sheets.S.cells.A1.value).toBe('opening balance');
+    });
+
+    it('bytes that are not a sheet are never saved over, edited or not', () => {
+        const sheet = open();
+        httpMock.expectOne(URL).flush({ content: '{"not": "a sheet"', contentHash: 'v1' });
+        sheet.detectChanges();
+
+        sheet.componentInstance['dirty'].set(true);
+        sheet.componentInstance['save']();
+        httpMock.expectNone(URL);
+        httpMock.expectNone(BINARY);
     });
 });
