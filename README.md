@@ -64,6 +64,10 @@ Peers are consumed as BUILT output, never as sources: compiling a peer's
 sources in would place them outside this package's `rootDir` and ship a second
 copy of that peer to anyone installing both.
 
+## Tests
+
+This package has no test runner of its own, so CI finds no tests in it: only typecheck, lint and build guard it here, and a check of "the same number of tests before and after" proves nothing for it. Its 13 spec files run in the admin suite of [coolms/theme-admin](https://github.com/coolms/theme-admin), which compiles this package from source. A change here is tested there, not by this repository's CI.
+
 ## Status
 
 A pre-release: the shape is still moving and it carries no
