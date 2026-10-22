@@ -9,7 +9,7 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
-## Unreleased
+## 2.0.0-alpha.3 -- 2026-10-22
 
 ### Fixed
 
@@ -26,7 +26,7 @@ predate this file would be a worse record than not having them.
 
 ### Changed
 
-- **`engines.node` names exactly the Node lines CI runs.** It moves from
+- **Breaking: `engines.node` names exactly the Node lines CI runs.** It moves from
   `^22.22.3 || ^24.15.0 || >=26` to `^22.22.3 || ^24.15.0 || ^26.0.0`: Node 27
   and later are not declared until CI runs them. Within each line the floor is
   the highest one any package in the lockfile declares. CI checks both, from
