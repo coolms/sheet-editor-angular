@@ -1600,7 +1600,7 @@ const ARROWS: Readonly<Record<string, 'up' | 'down' | 'left' | 'right' | undefin
         .sheet-editor__names-add { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .sheet-editor__names-input { width: 200px; }
         .sheet-editor__names-error {
-            margin: 4px 0 0; font-size: .8125rem; color: var(--cms-danger, #dc2626);
+            margin: 4px 0 0; font-size: .8125rem; color: var(--cms-danger, #b91c1c);
         }
         .sheet-editor__names-empty {
             margin: 6px 0 0; font-size: .8125rem; color: var(--cms-text-muted); max-width: 60ch;
