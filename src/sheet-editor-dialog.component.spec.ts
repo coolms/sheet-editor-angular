@@ -4,7 +4,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgxsModule, Store } from '@ngxs/store';
 import { of } from 'rxjs';
 import { AppConfigState } from '@coolms/core-angular';
-import { ConfirmDialogService, NativeDialogService } from '@coolms/ui-angular';
+import { ConfirmDialogService, NativeDialogService, ToastService } from '@coolms/ui-angular';
 import { SheetEditorDialogComponent } from './sheet-editor-dialog.component';
 import { columnWidthFromPx, columnWidthToPx, gridExtent, indexToColumn } from './sheet-document.model';
 import { dateToSerial } from './number-format';
@@ -3670,6 +3670,25 @@ describe('SheetEditorDialogComponent -- saves over the version it read', () => {
         const next = httpMock.expectOne('https://api.test/vfs/content?path=%2Fdocs%2Fbudget%20(copy).dsheet');
         expect(next.request.headers.get('If-Match')).toBe('"c1"');
         next.flush({ contentHash: 'c2' });
+    });
+
+    it('a refused copy says the server\'s declared words, naming the copy', async () => {
+        const sheet = open();
+        serve();
+        sheet.detectChanges();
+        stored.hash = 'v9';
+        const error = spyOn(TestBed.inject(ToastService), 'error');
+
+        edit(sheet, 'mine');
+        click(sheet, 'Save');
+        serve();
+        sheet.detectChanges();
+        click(sheet, 'Save as a copy');
+        await Promise.resolve();
+        await Promise.resolve();
+
+        httpMock.expectOne(BINARY).flush({ type: '/errors/files/already-exists', title: 'Already exists', status: 409, detail: 'A file named budget (copy).dsheet is already here.' }, { status: 409, statusText: 'Conflict' });
+        expect(error).toHaveBeenCalledOnceWith('A file named budget (copy).dsheet is already here.', 'budget (copy).dsheet');
     });
 
     it('a read that names no version: nothing is saved over the file, the edits go to a copy', async () => {

@@ -3,7 +3,7 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngxs/store';
-import { AppConfigState } from '@coolms/core-angular';
+import { AppConfigState, refusalWords } from '@coolms/core-angular';
 import { evaluateSheet } from './formula/evaluate';
 import { displayValue, type CellValue } from './formula/values';
 import { functionsByCategory, type FormulaFunction } from './formula/functions';
@@ -5229,9 +5229,7 @@ export class SheetEditorDialogComponent {
                     this.toast.success('Saved as a copy', chosen.trim());
                 },
                 error: (err: unknown) => {
-                    const status = err instanceof HttpErrorResponse ? err.status : 0;
-                    this.toast.error(status === 409 ? 'A file with that name exists' : 'The copy could not be saved',
-                        chosen.trim());
+                    this.toast.error(refusalWords(err), chosen.trim());
                 },
             });
     }

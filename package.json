@@ -12,7 +12,7 @@
     "@angular/cdk": "^22.0.0",
     "@angular/common": "^22.0.0",
     "@angular/core": "^22.0.0",
-    "@coolms/core-angular": "^2.0.0-alpha.1",
+    "@coolms/core-angular": "^2.0.0-alpha.7",
     "@coolms/document-engine": "^0.1.0-alpha.1",
     "@coolms/ui-angular": "^2.0.0-alpha.1",
     "@ngxs/store": "^22.0.0",
