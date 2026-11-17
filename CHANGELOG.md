@@ -9,6 +9,15 @@ currently serves. Earlier alphas are deliberately not reconstructed: entries are
 in the same commit as the work they describe, and inventing the ones that
 predate this file would be a worse record than not having them.
 
+## Unreleased
+
+### Changed
+
+- **A refused copy says the server's words.** Save as a copy reads `refusalWords` from `@coolms/core-angular`: a
+  declared problem says its `detail`, anything else "Something went wrong. Try again." The editor's own "A file with
+  that name exists" is gone. The peer dependency on `@coolms/core-angular` is now `^2.0.0-alpha.7`, the first release
+  with the rule.
+
 ## 2.0.0-alpha.3 -- 2026-10-22
 
 ### Fixed
