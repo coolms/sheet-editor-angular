@@ -9,4 +9,3 @@
 # reasons below were measured on 2026-10-07 from this lockfile: which direct dependencies bring the package in, whether
 # it ships, and what npm offers to clear it.
 minimatch                  GHSA-g3hv-75wg-m249  moderate  2026-11-30  Build and test tooling only, not in the published package (through eslint); no fixed version within eslint's range. Reviewed with the other glob and minimatch entries.
-picomatch                  GHSA-fc5q-39xc-vjpf  high      2026-12-17  Build and lint tooling only (ng-packagr and angular-eslint); npm ls picomatch --omit=dev is empty and a clean build's 7 shipped files do not contain it; no fixed release yet. Update and remove this line when one appears.
